@@ -68,7 +68,7 @@ final class AIService {
         var contents: [[String: Any]] = []
         if let sp = systemPrompt, !sp.isEmpty {
             contents.append(["role": "user", "parts": [["text": sp]]])
-            contents.append(["role": "model", "parts": [["text": "Understood."]])
+            contents.append(["role": "model", "parts": [["text": "Understood."]]])
         }
         contents.append(["role": "user", "parts": [["text": message]]])
         let body: [String: Any] = ["contents": contents]
