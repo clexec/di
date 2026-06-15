@@ -18,12 +18,18 @@ struct VideoBackgroundView: UIViewRepresentable {
             playerView.resizeLayer()
         }
     }
+    
+    static func dismantleUIView(_ uiView: UIView, coordinator: ()) {
+        if let playerView = uiView as? LoopingVideoPlayerView {
+            playerView.cleanup()
+        }
+    }
 }
 
 class LoopingVideoPlayerView: UIView {
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
-    private var observer: NSObjectProtocol?
+    private var token: Any?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -59,21 +65,27 @@ class LoopingVideoPlayerView: UIView {
         self.player = player
         
         // Observe end to loop with 2s delay
-        self.observer = NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: playerItem,
-            queue: .main
-        ) { _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                player.seek(to: .zero)
-                player.play()
-            }
-        }
+        self.token = playerItem.observe(\.status, options: [.new]) { _, _ in }
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(itemDidFinish),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: playerItem
+        )
         
         // Slow playback
         player.play()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             player.rate = 0.7
+        }
+    }
+    
+    @objc private func itemDidFinish(_ notification: Notification) {
+        guard let player = player else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            player.seek(to: .zero)
+            player.play()
         }
     }
     
@@ -88,12 +100,9 @@ class LoopingVideoPlayerView: UIView {
         playerLayer?.frame = self.bounds
     }
     
-    nonisolated deinit {
-        let obs = observer
-        Task { @MainActor in
-            if let obs {
-                NotificationCenter.default.removeObserver(obs)
-            }
-        }
+    func cleanup() {
+        NotificationCenter.default.removeObserver(self)
+        player?.pause()
+        player = nil
     }
 }
