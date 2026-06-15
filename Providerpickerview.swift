@@ -18,7 +18,7 @@ struct ProviderPickerView: View {
                         Image(systemName: "xmark").font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(10)
                     }
                     .glassEffect(.regular.interactive())
-                    .glassEffectID(pickerNamespace, in: "closePicker")
+                    .glassEffectID(id: "closePicker", namespace: pickerNamespace)
                     
                     Spacer()
                     
@@ -69,6 +69,6 @@ struct ProviderRow: View {
             .padding(.horizontal, 16).padding(.vertical, 14)
         }
         .glassEffect(isSelected ? .regular.interactive().tint(.blue) : .clear.interactive())
-        .glassEffectID(namespace, in: provider.rawValue)
+        .glassEffectID(id: provider.rawValue, namespace: namespace)
     }
 }
