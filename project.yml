@@ -20,6 +20,9 @@ targets:
         excludes:
           - "project.yml"
           - ".github"
+          - ".git"
+          - "build"
+          - "DeAI.xcodeproj"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.deai.app
