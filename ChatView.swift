@@ -9,15 +9,11 @@ struct ChatView: View {
     @State private var showSettings: Bool = false
     @State private var showConversations: Bool = false
     @State private var showProviderPicker: Bool = false
-    // Liquid Glass variables
     @Namespace private var glassNamespace
-    @State private var isMerged: Bool = false
-    @State private var isInputExpanded: Bool = false
     
     var body: some View {
         ZStack {
-            LinearGradient(colors: [Color(hex: "#4C1D95"), Color(hex: "#1F1F2E"), Color.black], startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
+            Color.black.ignoresSafeArea()
             
             VStack(spacing: 0) {
                 topNavBar
@@ -32,11 +28,11 @@ struct ChatView: View {
         .sheet(isPresented: $showProviderPicker) { ProviderPickerView() }
     }
     
-    // MARK: - Top Nav Bar — Liquid Glass container with morphing IDs
+    // MARK: - Top Nav Bar
     private var topNavBar: some View {
         GlassEffectContainer(spacing: 40) {
             HStack(spacing: 10) {
-                // Settings + Chat buttons — glass capsule that merges
+                // Settings + Chat buttons
                 HStack(spacing: 8) {
                     Button(action: { showSettings = true }) {
                         Image(systemName: "gearshape.fill")
@@ -52,7 +48,7 @@ struct ChatView: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .glassEffect(.regular.interactive().tint(.purple))
+                .glassEffect(.regular.interactive())
                 
                 // Model selector button
                 Button(action: { withAnimation { showProviderPicker = true } }) {
@@ -69,14 +65,14 @@ struct ChatView: View {
                 
                 Spacer()
                 
-                // New chat — glass with purple tint
+                // New chat
                 Button(action: { withAnimation { messages = [] } }) {
                     Image(systemName: "square.and.pencil")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.white)
                         .padding(10)
                 }
-                .glassEffect(.regular.interactive().tint(.purple))
+                .glassEffect(.regular.interactive())
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
@@ -97,11 +93,10 @@ struct ChatView: View {
                 
                 Text("Link to LM Studio and run larger models remotely from your computer. End-to-end encrypted.")
                     .font(.system(size: 16, weight: .regular))
-                    .foregroundColor(Color(hex: "#9CA3AF"))
+                    .foregroundColor(.white.opacity(0.4))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
                 
-                // Try it button — regular glass + purple tint + interactive
                 Button(action: {}) {
                     Text("Try it")
                         .font(.system(size: 16, weight: .medium))
@@ -109,14 +104,14 @@ struct ChatView: View {
                         .padding(.horizontal, 44)
                         .padding(.vertical, 12)
                 }
-                .glassEffect(.regular.interactive().tint(.purple))
+                .glassEffect(.regular.interactive())
                 .padding(.top, 4)
             }
             .padding(.horizontal, 20)
             
             Spacer()
             
-            // Quick prompts — GlassEffectContainer for merge animation
+            // Quick prompts
             GlassEffectContainer(spacing: 20) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
@@ -148,20 +143,20 @@ struct ChatView: View {
         }
     }
     
-    // MARK: - Bottom Input — Liquid Glass container for merge
+    // MARK: - Bottom Input
     private var bottomInputArea: some View {
         GlassEffectContainer(spacing: 0) {
             HStack(spacing: 12) {
-                // Plus button — interactive glass with red tint
+                // Plus button
                 Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                         .padding(10)
                 }
-                .glassEffect(.regular.interactive().tint(.red))
+                .glassEffect(.regular.interactive())
                 
-                // Text field — regular glass
+                // Text field
                 TextField("Ask anything", text: $messageText)
                     .foregroundColor(.white)
                     .font(.system(size: 16))
@@ -169,15 +164,14 @@ struct ChatView: View {
                     .padding(.vertical, 11)
                     .glassEffect(.regular)
                 
-                // Send button — interactive glass with blue tint
+                // Send button
                 Button(action: sendMessage) {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(messageText.isEmpty ? .white.opacity(0.35) : .white)
                         .padding(10)
                 }
-                .glassEffect(.regular.interactive().tint(.blue))
-                // Merge attach + input + send into one glass when typing
+                .glassEffect(.regular.interactive())
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
@@ -185,7 +179,7 @@ struct ChatView: View {
         }
     }
     
-    // MARK: - Attach Menu — glass container
+    // MARK: - Attach Menu — rectangular, not oval
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear.contentShape(Rectangle())
@@ -237,22 +231,22 @@ struct ChatView: View {
     }
 }
 
-// MARK: - Quick Prompt Chip — glass with purple tint + interactive
+// MARK: - Quick Prompt Chip — no color tint
 struct QuickPromptChip: View {
     let title: String; let subtitle: String; let action: () -> Void
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.system(size: 14, weight: .bold)).foregroundColor(.white)
-                Text(subtitle).font(.system(size: 13)).foregroundColor(Color(hex: "#9CA3AF"))
+                Text(subtitle).font(.system(size: 13)).foregroundColor(.white.opacity(0.4))
             }
             .padding(.horizontal, 16).padding(.vertical, 14)
         }
-        .glassEffect(.regular.interactive().tint(.purple))
+        .glassEffect(.regular.interactive())
     }
 }
 
-// MARK: - Chat Bubble — glass effect with tint per role
+// MARK: - Chat Bubble — no color tint, monochrome glass
 struct ChatBubble: View {
     let message: ChatMessage
     var namespace: Namespace.ID
@@ -263,7 +257,7 @@ struct ChatBubble: View {
                 .font(.system(size: 16))
                 .foregroundColor(.white)
                 .padding(.horizontal, 14).padding(.vertical, 10)
-                .glassEffect(message.isUser ? .regular.interactive().tint(.purple) : .clear.interactive().tint(.blue))
+                .glassEffect(message.isUser ? .regular.interactive() : .clear.interactive())
                 .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
             if !message.isUser { Spacer() }
         }
@@ -276,7 +270,7 @@ struct AttachMenuItem: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                Image(systemName: icon).font(.system(size: 18, weight: .medium)).foregroundColor(.white).frame(width: 28)
+                Image(systemName: icon).font(.system(size: 18, weight: .medium)).foregroundColor(.white.opacity(0.7)).frame(width: 28)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.system(size: 16, weight: .medium)).foregroundColor(.white)
                     if let subtitle { Text(subtitle).font(.system(size: 12)).foregroundColor(.white.opacity(0.35)) }
@@ -288,7 +282,7 @@ struct AttachMenuItem: View {
     }
 }
 
-// MARK: - Typing Indicator — clear glass
+// MARK: - Typing Indicator
 struct TypingIndicator: View {
     @State private var animating = false
     var body: some View {

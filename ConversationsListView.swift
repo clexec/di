@@ -3,16 +3,14 @@ import SwiftUI
 struct ConversationsListView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) var dismiss
-    // Liquid Glass
     @Namespace private var convNamespace
-    @State private var isMerged: Bool = false
     
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — glass buttons
+                // Header
                 HStack {
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark").font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(10)
@@ -26,9 +24,9 @@ struct ConversationsListView: View {
                     Spacer()
                     
                     Button(action: { withAnimation { dismiss() } }) {
-                        Text("Done").font(.system(size: 15, weight: .semibold)).foregroundColor(.blue)
+                        Text("Done").font(.system(size: 15, weight: .semibold)).foregroundColor(.white.opacity(0.7))
                     }
-                    .glassEffect(.clear.interactive().tint(.blue))
+                    .glassEffect(.clear.interactive())
                 }
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 
@@ -41,14 +39,22 @@ struct ConversationsListView: View {
                     .glassEffect(.clear).padding(32)
                     Spacer()
                 } else {
-                    // List — GlassEffectContainer for merge
+                    // List
                     GlassEffectContainer(spacing: 30) {
                         List {
                             ForEach(appState.conversations) { conversation in
                                 Button(action: { withAnimation { appState.currentConversation = conversation; dismiss() } }) {
                                     HStack(spacing: 12) {
-                                        ZStack { RoundedRectangle(cornerRadius: 8).fill(conversation.provider.color.opacity(0.2)).frame(width: 36, height: 36); Image(systemName: conversation.provider.icon).font(.system(size: 14, weight: .medium)).foregroundColor(conversation.provider.color) }
-                                        VStack(alignment: .leading, spacing: 3) { Text(conversation.title).font(.system(size: 15, weight: .medium)).foregroundColor(.white); Text("\(conversation.messages.count) messages").font(.system(size: 13)).foregroundColor(.white.opacity(0.3)) }
+                                        // Monochrome icon — no colored background
+                                        Image(systemName: conversation.provider.icon)
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundColor(.white.opacity(0.7))
+                                            .frame(width: 36, height: 36)
+                                        
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            Text(conversation.title).font(.system(size: 15, weight: .medium)).foregroundColor(.white)
+                                            Text("\(conversation.messages.count) messages").font(.system(size: 13)).foregroundColor(.white.opacity(0.3))
+                                        }
                                         Spacer()
                                         Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold)).foregroundColor(.white.opacity(0.15))
                                     }

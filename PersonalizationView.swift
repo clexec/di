@@ -5,9 +5,7 @@ struct PersonalizationView: View {
     @Environment(\.dismiss) var dismiss
     @State private var instructions: String = ""
     @State private var temperatureOption: String = "Default"
-    // Liquid Glass
     @Namespace private var persNamespace
-    @State private var isMerged: Bool = false
     
     let temperatureOptions = ["Default", "Low (0.2)", "Medium (0.7)", "High (1.2)", "Max (2.0)"]
     
@@ -16,7 +14,7 @@ struct PersonalizationView: View {
             Color.black.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — glass buttons
+                // Header
                 HStack {
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "chevron.left").font(.system(size: 13, weight: .bold)).foregroundColor(.white).padding(10)
@@ -30,28 +28,28 @@ struct PersonalizationView: View {
                     Spacer()
                     
                     Button(action: { withAnimation { appState.customInstructions = instructions; dismiss() } }) {
-                        Text("Save").font(.system(size: 15, weight: .medium)).foregroundColor(.white.opacity(0.6)).padding(.horizontal, 14).padding(.vertical, 7)
+                        Text("Save").font(.system(size: 15, weight: .medium)).foregroundColor(.white.opacity(0.7)).padding(.horizontal, 14).padding(.vertical, 7)
                     }
-                    .glassEffect(.regular.interactive().tint(.blue))
+                    .glassEffect(.regular.interactive())
                 }
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 
-                // Content — GlassEffectContainer for merge
+                // Content
                 ScrollView {
                     GlassEffectContainer(spacing: 40) {
                         VStack(spacing: 16) {
-                            // Toggle — regular glass with green tint
+                            // Toggle
                             HStack {
                                 Text("Enable customization").font(.system(size: 16, weight: .medium)).foregroundColor(.white)
                                 Spacer()
-                                Toggle("", isOn: $appState.personalizationEnabled).labelsHidden().tint(.green)
+                                Toggle("", isOn: $appState.personalizationEnabled).labelsHidden()
                             }
                             .padding(.horizontal, 16).padding(.vertical, 14)
-                            .glassEffect(.regular.interactive().tint(.green))
+                            .glassEffect(.regular.interactive())
                             
-                            // Custom instructions — regular glass
+                            // Custom instructions
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Custom Instructions").font(.system(size: 13, weight: .medium)).foregroundColor(Color(hex: "#9CA3AF")).padding(.leading, 4)
+                                Text("Custom Instructions").font(.system(size: 13, weight: .medium)).foregroundColor(.white.opacity(0.4)).padding(.leading, 4)
                                 
                                 ZStack(alignment: .bottomTrailing) {
                                     TextEditor(text: $instructions).foregroundColor(.white).font(.system(size: 15)).scrollContentBackground(.hidden).background(Color.clear).frame(minHeight: 160)
@@ -62,7 +60,7 @@ struct PersonalizationView: View {
                                 .glassEffect(.regular)
                             }
                             
-                            // Temperature — regular glass with orange tint
+                            // Temperature
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Text("Temperature").font(.system(size: 16, weight: .semibold)).foregroundColor(.white)
@@ -78,7 +76,7 @@ struct PersonalizationView: View {
                                     .glassEffect(.clear.interactive())
                                 }
                                 .padding(.horizontal, 16).padding(.vertical, 14)
-                                .glassEffect(.regular.interactive().tint(.orange))
+                                .glassEffect(.regular.interactive())
                                 
                                 Text("Controls randomness in responses. Lower values make the AI more focused and deterministic, while higher values make it more creative and unpredictable.")
                                     .font(.system(size: 13)).foregroundColor(.white.opacity(0.3)).padding(.horizontal, 4)
