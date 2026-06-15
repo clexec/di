@@ -3,7 +3,6 @@ import SwiftUI
 struct ProviderPickerView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) var dismiss
-    @Namespace private var pickerNamespace
     
     var body: some View {
         ZStack {
@@ -30,18 +29,16 @@ struct ProviderPickerView: View {
                 }
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 
-                // Provider list with brand icons
+                // Provider list — NO GlassEffectContainer
                 ScrollView {
-                    GlassEffectContainer(spacing: 40) {
-                        VStack(spacing: 8) {
-                            ForEach(AIProvider.allCases) { provider in
-                                ProviderRow(provider: provider, isSelected: appState.selectedProvider == provider, namespace: pickerNamespace) {
-                                    withAnimation { appState.selectedProvider = provider; dismiss() }
-                                }
+                    VStack(spacing: 8) {
+                        ForEach(AIProvider.allCases) { provider in
+                            ProviderRow(provider: provider, isSelected: appState.selectedProvider == provider) {
+                                withAnimation { appState.selectedProvider = provider; dismiss() }
                             }
                         }
-                        .padding(.horizontal, 16).padding(.top, 8)
                     }
+                    .padding(.horizontal, 16).padding(.top, 8)
                 }
             }
         }
@@ -52,13 +49,11 @@ struct ProviderPickerView: View {
 struct ProviderRow: View {
     let provider: AIProvider
     let isSelected: Bool
-    var namespace: Namespace.ID
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                // Brand icon from BrandIcons (thesvg.org + SF Symbols)
                 ProviderIconView(provider: provider, size: 28)
                     .frame(width: 40, height: 40)
                 

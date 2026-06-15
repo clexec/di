@@ -28,57 +28,57 @@ struct ChatView: View {
         .sheet(isPresented: $showProviderPicker) { ProviderPickerView() }
     }
     
-    // MARK: - Top Nav Bar
+    // MARK: - Top Nav Bar — NO GlassEffectContainer, each button separate
     private var topNavBar: some View {
-        GlassEffectContainer(spacing: 40) {
-            HStack(spacing: 10) {
-                // Settings + Chat buttons
-                HStack(spacing: 8) {
-                    Button(action: { showSettings = true }) {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundColor(.white)
-                    }
-                    
-                    Button(action: { showConversations = true }) {
-                        Image(systemName: "bubble.left.fill")
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundColor(.white)
-                    }
+        HStack(spacing: 12) {
+            // Settings button — separate, bigger
+            Button(action: { showSettings = true }) {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white)
+                    .frame(width: 42, height: 42)
+            }
+            .glassEffect(.regular.interactive())
+            
+            // Chat list button — separate, bigger
+            Button(action: { showConversations = true }) {
+                Image(systemName: "bubble.left.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white)
+                    .frame(width: 42, height: 42)
+            }
+            .glassEffect(.regular.interactive())
+            
+            // Model selector button
+            Button(action: { withAnimation { showProviderPicker = true } }) {
+                HStack(spacing: 6) {
+                    ProviderIconView(provider: appState.selectedProvider, size: 16)
+                    Text(appState.selectedModel)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.4))
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .glassEffect(.regular.interactive())
-                
-                // Model selector button with provider icon
-                Button(action: { withAnimation { showProviderPicker = true } }) {
-                    HStack(spacing: 6) {
-                        ProviderIconView(provider: appState.selectedProvider, size: 16)
-                        Text(appState.selectedModel)
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.white)
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.4))
-                    }
-                }
-                .glassEffect(.clear.interactive())
-                
-                Spacer()
-                
-                // New chat
-                Button(action: { withAnimation { messages = [] } }) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.white)
-                        .padding(10)
-                }
-                .glassEffect(.regular.interactive())
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .padding(.bottom, 12)
+            .glassEffect(.regular.interactive())
+            
+            Spacer()
+            
+            // New chat button — separate
+            Button(action: { withAnimation { messages = [] } }) {
+                Image(systemName: "square.and.pencil")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white)
+                    .frame(width: 42, height: 42)
+            }
+            .glassEffect(.regular.interactive())
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 12)
     }
     
     // MARK: - Empty State
@@ -118,18 +118,16 @@ struct ChatView: View {
             
             Spacer()
             
-            // Quick prompts with SF Symbol icons
-            GlassEffectContainer(spacing: 20) {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        QuickPromptChip(icon: "dumbbell.fill", title: "Design", subtitle: "a workout routine") { messageText = "Design a workout routine" }
-                        QuickPromptChip(icon: "lightbulb.fill", title: "Explain", subtitle: "a complex topic simply") { messageText = "Explain a complex topic simply" }
-                        QuickPromptChip(icon: "camera.fill", title: "Master", subtitle: "smartphone photography") { messageText = "Master smartphone photography" }
-                    }
-                    .padding(.horizontal, 16)
+            // Quick prompts — separate chips, NO GlassEffectContainer
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    QuickPromptChip(icon: "dumbbell.fill", title: "Design", subtitle: "a workout routine") { messageText = "Design a workout routine" }
+                    QuickPromptChip(icon: "lightbulb.fill", title: "Explain", subtitle: "a complex topic simply") { messageText = "Explain a complex topic simply" }
+                    QuickPromptChip(icon: "camera.fill", title: "Master", subtitle: "smartphone photography") { messageText = "Master smartphone photography" }
                 }
-                .padding(.bottom, 12)
+                .padding(.horizontal, 16)
             }
+            .padding(.bottom, 12)
         }
     }
     
@@ -150,54 +148,50 @@ struct ChatView: View {
         }
     }
     
-    // MARK: - Bottom Input
+    // MARK: - Bottom Input — NO GlassEffectContainer, separate elements
     private var bottomInputArea: some View {
-        GlassEffectContainer(spacing: 0) {
-            HStack(spacing: 12) {
-                // Plus button with SF Symbol
-                Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .padding(10)
-                }
-                .glassEffect(.regular.interactive())
-                
-                // Text field
-                TextField("Ask anything", text: $messageText)
+        HStack(spacing: 10) {
+            // Plus button
+            Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.white)
-                    .font(.system(size: 16))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 11)
-                    .glassEffect(.regular)
-                
-                // Send button with SF Symbol
-                Button(action: sendMessage) {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(messageText.isEmpty ? .white.opacity(0.25) : .white.opacity(0.9))
-                }
+                    .frame(width: 42, height: 42)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
-            .padding(.bottom, 8)
+            .glassEffect(.regular.interactive())
+            
+            // Text field
+            TextField("Ask anything", text: $messageText)
+                .foregroundColor(.white)
+                .font(.system(size: 16))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 11)
+                .glassEffect(.regular)
+            
+            // Send button
+            Button(action: sendMessage) {
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundColor(messageText.isEmpty ? .white.opacity(0.25) : .white.opacity(0.9))
+            }
         }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .padding(.bottom, 8)
     }
     
-    // MARK: - Attach Menu
+    // MARK: - Attach Menu — simple VStack, NO GlassEffectContainer
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear.contentShape(Rectangle())
                 .onTapGesture { withAnimation(.spring()) { showAttachMenu = false } }
             
-            GlassEffectContainer(spacing: 0) {
-                VStack(alignment: .leading, spacing: 0) {
-                    AttachMenuItem(icon: "doc.fill", title: "Attach file", subtitle: nil) { withAnimation { showAttachMenu = false } }
-                    AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
-                    AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
-                }
-                .glassEffect(.regular)
+            VStack(alignment: .leading, spacing: 0) {
+                AttachMenuItem(icon: "doc.fill", title: "Attach file", subtitle: nil) { withAnimation { showAttachMenu = false } }
+                AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
+                AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
             }
+            .glassEffect(.regular)
             .padding(.leading, 14)
             .padding(.bottom, 80)
             .frame(width: 260)
@@ -236,7 +230,7 @@ struct ChatView: View {
     }
 }
 
-// MARK: - Quick Prompt Chip with SF Symbol
+// MARK: - Quick Prompt Chip
 struct QuickPromptChip: View {
     let icon: String
     let title: String
@@ -286,7 +280,7 @@ struct ChatBubble: View {
     }
 }
 
-// MARK: - Attach Menu Item with SF Symbols
+// MARK: - Attach Menu Item
 struct AttachMenuItem: View {
     let icon: String
     let title: String
