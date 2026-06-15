@@ -49,3 +49,94 @@ jobs:
           name: DeAI.ipa
           path: DeAI.ipa
           retention-days: 30
+
+  screenshots:
+    name: Take Screenshots
+    runs-on: macos-26
+    needs: []
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: List available simulators
+        run: xcrun simctl list devices available | grep -i iphone
+
+      - name: Build for Simulator
+        run: |
+          xcodebuild build \
+            -project DeAI.xcodeproj \
+            -scheme DeAI \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -derivedDataPath build/DerivedData \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Boot Simulator & Take Screenshots
+        run: |
+          # Create screenshots directory
+          mkdir -p screenshots
+          
+          # Find the app binary path
+          APP_PATH=$(find build/DerivedData -name "DeAI.app" -type d | head -1)
+          echo "App path: $APP_PATH"
+          
+          # Get simulator UUID
+          SIM_UUID=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | grep -v "Shutdown" | head -1 | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' || true)
+          
+          if [ -z "$SIM_UUID" ]; then
+            SIM_UUID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
+          fi
+          
+          echo "Using simulator: $SIM_UUID"
+          
+          # Erase and boot simulator
+          xcrun simctl shutdown "$SIM_UUID" 2>/dev/null || true
+          xcrun simctl erase "$SIM_UUID" 2>/dev/null || true
+          xcrun simctl boot "$SIM_UUID" 2>/dev/null || true
+          
+          # Wait for simulator to boot
+          sleep 15
+          
+          # Open Simulator app window
+          open -a Simulator
+          sleep 5
+          
+          # Install and launch app
+          xcrun simctl install "$SIM_UUID" "$APP_PATH"
+          xcrun simctl launch "$SIM_UUID" com.deai.app
+          sleep 8
+          
+          # Take screenshot 1 - Main screen (empty state)
+          xcrun simctl io "$SIM_UUID" screenshot screenshots/01_main_chat.png
+          echo "Screenshot 1 taken - Main chat screen"
+          
+          # Wait a moment
+          sleep 3
+          
+          # Take screenshot 2
+          xcrun simctl io "$SIM_UUID" screenshot screenshots/02_chat_idle.png
+          echo "Screenshot 2 taken - Chat idle"
+          
+          # Shutdown simulator
+          xcrun simctl shutdown "$SIM_UUID" 2>/dev/null || true
+
+      - name: Upload Screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: Screenshots
+          path: screenshots/
+          retention-days: 30
