@@ -43,20 +43,20 @@ struct ChatView: View {
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.white)
                     }
-                    .glassEffectID(id: "navLeft", namespace: glassNamespace)
+                    .glassEffectID(glassNamespace, in: "navLeft")
                     
                     Button(action: { showConversations = true }) {
                         Image(systemName: "bubble.left.fill")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.white)
                     }
-                    .glassEffectID(id: "navRight", namespace: glassNamespace)
+                    .glassEffectID(glassNamespace, in: "navRight")
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .glassEffect(.regular.interactive().tint(.purple))
-                .glassEffectUnion(id: "navLeft", namespace: glassNamespace)
-                .glassEffectUnion(id: "navRight", namespace: glassNamespace)
+                .glassEffectUnion(glassNamespace, in: "navLeft")
+                .glassEffectUnion(glassNamespace, in: "navRight")
                 
                 // Model selector button
                 Button(action: { withAnimation { showProviderPicker = true } }) {
@@ -164,7 +164,7 @@ struct ChatView: View {
                         .padding(10)
                 }
                 .glassEffect(.regular.interactive().tint(.red))
-                .glassEffectID(id: "attachBtn", namespace: glassNamespace)
+                .glassEffectID(glassNamespace, in: "attachBtn")
                 
                 // Text field — regular glass
                 TextField("Ask anything", text: $messageText)
@@ -173,7 +173,7 @@ struct ChatView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 11)
                     .glassEffect(.regular)
-                    .glassEffectID(id: "inputField", namespace: glassNamespace)
+                    .glassEffectID(glassNamespace, in: "inputField")
                 
                 // Send button — interactive glass with blue tint
                 Button(action: sendMessage) {
@@ -183,10 +183,10 @@ struct ChatView: View {
                         .padding(10)
                 }
                 .glassEffect(.regular.interactive().tint(.blue))
-                .glassEffectID(id: "sendBtn", namespace: glassNamespace)
+                .glassEffectID(glassNamespace, in: "sendBtn")
                 // Merge attach + input + send into one glass when typing
-                .glassEffectUnion(id: "attachBtn", namespace: glassNamespace)
-                .glassEffectUnion(id: "inputField", namespace: glassNamespace)
+                .glassEffectUnion(glassNamespace, in: "attachBtn")
+                .glassEffectUnion(glassNamespace, in: "inputField")
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
@@ -273,7 +273,7 @@ struct ChatBubble: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 14).padding(.vertical, 10)
                 .glassEffect(message.isUser ? .regular.interactive().tint(.purple) : .clear.interactive().tint(.blue))
-                .glassEffectID(id: message.id.uuidString, namespace: namespace)
+                .glassEffectID(namespace, in: message.id.uuidString)
                 .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
             if !message.isUser { Spacer() }
         }
