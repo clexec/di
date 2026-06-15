@@ -8,6 +8,7 @@ struct ChatView: View {
     @State private var showSettingsSheet: Bool = false
     @State private var showConversationsList: Bool = false
     @State private var messages: [ChatMessage] = []
+    @State private var isLoading: Bool = false
     
     var body: some View {
         ZStack {
@@ -111,6 +112,14 @@ struct ChatView: View {
                 ForEach(messages) { message in
                     ChatBubble(message: message)
                 }
+                
+                if isLoading {
+                    HStack {
+                        TypingIndicator()
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -187,10 +196,32 @@ struct ChatView: View {
         guard !messageText.isEmpty else { return }
         let userMsg = ChatMessage(content: messageText, isUser: true, timestamp: Date())
         messages.append(userMsg)
+        let prompt = messageText
         messageText = ""
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            let aiMsg = ChatMessage(content: "This is a response from \(appState.selectedProvider.rawValue).", isUser: false, timestamp: Date())
-            messages.append(aiMsg)
+        isLoading = true
+        
+        Task {
+            do {
+                let response = try await AIService.shared.sendMessage(
+                    provider: appState.selectedProvider,
+                    message: prompt,
+                    apiKey: appState.apiKeys[appState.selectedProvider],
+                    model: appState.selectedProvider.defaultModel,
+                    systemPrompt: appState.personalizationEnabled ? appState.customInstructions : nil,
+                    ollamaURL: appState.ollamaURL
+                )
+                await MainActor.run {
+                    let aiMsg = ChatMessage(content: response, isUser: false, timestamp: Date())
+                    messages.append(aiMsg)
+                    isLoading = false
+                }
+            } catch {
+                await MainActor.run {
+                    let errorMsg = ChatMessage(content: "Error: \(error.localizedDescription)", isUser: false, timestamp: Date())
+                    messages.append(errorMsg)
+                    isLoading = false
+                }
+            }
         }
     }
 }
@@ -328,5 +359,31 @@ struct AttachMenuItem: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
         }
+    }
+}
+
+// MARK: - Typing Indicator
+struct TypingIndicator: View {
+    @State private var animating = false
+    
+    var body: some View {
+        HStack(spacing: 6) {
+            ForEach(0..<3, id: \.self) { i in
+                Circle()
+                    .fill(Color.white.opacity(0.4))
+                    .frame(width: 8, height: 8)
+                    .offset(y: animating ? -4 : 4)
+                    .animation(
+                        .easeInOut(duration: 0.5)
+                            .repeatForever(autoreverses: true)
+                            .delay(Double(i) * 0.15),
+                        value: animating
+                    )
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .liquidGlass(cornerRadius: 18, opacity: 0.08)
+        .onAppear { animating = true }
     }
 }

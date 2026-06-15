@@ -55,6 +55,9 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: NO
         UILaunchScreen: {}
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: YES
+          NSAllowsArbitraryLoads: YES
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UISupportedInterfaceOrientations~ipad:

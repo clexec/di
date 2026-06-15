@@ -50,6 +50,8 @@ struct SettingsView: View {
                             showPersonalization = true
                         }
                         Divider().background(Color.white.opacity(0.04))
+                        SettingsRow(icon: "cloud.fill", title: "Ollama Server", subtitle: appState.ollamaURL) {}
+                        Divider().background(Color.white.opacity(0.04))
                         SettingsRow(icon: "externaldrive.fill", title: "Custom API URL", subtitle: appState.customAPIURL.isEmpty ? "Not set" : appState.customAPIURL) {}
                         Divider().background(Color.white.opacity(0.04))
                         SettingsRow(icon: "keyboard", title: "Show Keyboard on Launch", subtitle: nil) {

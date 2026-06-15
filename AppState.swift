@@ -6,6 +6,7 @@ enum AIProvider: String, CaseIterable, Identifiable {
     case deepseek = "DeepSeek"
     case gemini = "Gemini"
     case openrouter = "OpenRouter"
+    case ollama = "Ollama"
     case custom = "Custom API"
     
     var id: String { rawValue }
@@ -16,6 +17,7 @@ enum AIProvider: String, CaseIterable, Identifiable {
         case .deepseek: return "waveform"
         case .gemini: return "star.circle"
         case .openrouter: return "arrow.triangle.branch"
+        case .ollama: return "cloud.fill"
         case .custom: return "terminal"
         }
     }
@@ -26,7 +28,30 @@ enum AIProvider: String, CaseIterable, Identifiable {
         case .deepseek: return Color(hex: "#4C6EF5")
         case .gemini: return Color(hex: "#4285F4")
         case .openrouter: return Color(hex: "#FF6B35")
+        case .ollama: return Color(hex: "#F0F0F0")
         case .custom: return Color(hex: "#8B5CF6")
+        }
+    }
+    
+    var defaultModel: String {
+        switch self {
+        case .openai: return "gpt-4o-mini"
+        case .deepseek: return "deepseek-chat"
+        case .gemini: return "gemini-pro"
+        case .openrouter: return "openai/gpt-4o-mini"
+        case .ollama: return "llama3.2"
+        case .custom: return ""
+        }
+    }
+    
+    var baseURL: String {
+        switch self {
+        case .openai: return "https://api.openai.com/v1"
+        case .deepseek: return "https://api.deepseek.com/v1"
+        case .gemini: return "https://generativelanguage.googleapis.com/v1beta"
+        case .openrouter: return "https://openrouter.ai/api/v1"
+        case .ollama: return "http://localhost:11434"
+        case .custom: return ""
         }
     }
 }
@@ -53,17 +78,22 @@ class AppState: ObservableObject {
     @Published var currentConversation: Conversation?
     @Published var apiKeys: [AIProvider: String] = [:]
     @Published var customAPIURL: String = ""
+    @Published var ollamaURL: String = "http://localhost:11434"
     @Published var showKeyboardOnLaunch: Bool = true
     @Published var customInstructions: String = ""
     @Published var personalizationEnabled: Bool = true
     @Published var browserURL: String = "https://www.google.com"
     
     init() {
+        // Pre-set API keys
+        apiKeys[.openrouter] = "76f439c65f4941278295e5552e463d11.BmVE0opP9oCNGcLfyTWbOGE-"
+        selectedProvider = .ollama
+        
         conversations = [
             Conversation(title: "Swift UI help", messages: [
                 ChatMessage(content: "Can you help me with SwiftUI animations?", isUser: true, timestamp: Date()),
                 ChatMessage(content: "Sure! SwiftUI has great built-in animation support.", isUser: false, timestamp: Date())
-            ], provider: .openai, createdAt: Date()),
+            ], provider: .ollama, createdAt: Date()),
             Conversation(title: "Recipe ideas", messages: [
                 ChatMessage(content: "Give me pasta recipe ideas", isUser: true, timestamp: Date())
             ], provider: .gemini, createdAt: Date().addingTimeInterval(-3600))
