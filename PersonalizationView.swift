@@ -10,28 +10,26 @@ struct PersonalizationView: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color(hex: "#6A5ACD"), Color(hex: "#2D1B69"), Color(hex: "#1A1A2E")],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            Color.black.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Custom header — NO navigation bar
+                // Header — NO navigation bar
                 HStack {
                     Button(action: { dismiss() }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundColor(.white.opacity(0.6))
-                            .frame(width: 32, height: 32)
-                            .liquidGlass(cornerRadius: 16, opacity: 0.1)
+                        ZStack {
+                            Circle()
+                                .fill(Color(hex: "#374151"))
+                                .frame(width: 40, height: 40)
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundColor(.white)
+                        }
                     }
                     
                     Spacer()
                     
                     Text("Personalization")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.white)
                     
                     Spacer()
@@ -41,19 +39,16 @@ struct PersonalizationView: View {
                         dismiss()
                     }) {
                         Text("Save")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Color(hex: "#6366F1"))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 7)
-                            .glassCapsule(opacity: 0.08)
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(.white.opacity(0.5))
                     }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 
                 ScrollView {
-                    VStack(spacing: 20) {
-                        // Enable toggle
+                    VStack(spacing: 16) {
+                        // Toggle
                         HStack {
                             Text("Enable customization")
                                 .font(.system(size: 16, weight: .medium))
@@ -61,17 +56,17 @@ struct PersonalizationView: View {
                             Spacer()
                             Toggle("", isOn: $appState.personalizationEnabled)
                                 .labelsHidden()
-                                .tint(Color(hex: "#34C759"))
+                                .tint(Color(hex: "#10B981"))
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 14)
-                        .liquidGlass(cornerRadius: 14, opacity: 0.07)
+                        .background(RoundedRectangle(cornerRadius: 12).fill(Color(hex: "#1F2937")))
                         
                         // Custom instructions
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text("Custom Instructions")
                                 .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(.white.opacity(0.35))
+                                .foregroundColor(Color(hex: "#9CA3AF"))
                                 .padding(.leading, 4)
                             
                             ZStack(alignment: .bottomTrailing) {
@@ -101,11 +96,11 @@ struct PersonalizationView: View {
                                     .padding(8)
                             }
                             .padding(12)
-                            .liquidGlass(cornerRadius: 14, opacity: 0.07)
+                            .background(RoundedRectangle(cornerRadius: 12).fill(Color(hex: "#1F2937")))
                         }
                         
                         // Temperature
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Temperature")
                                     .font(.system(size: 16, weight: .semibold))
@@ -128,7 +123,7 @@ struct PersonalizationView: View {
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 14)
-                            .liquidGlass(cornerRadius: 14, opacity: 0.07)
+                            .background(RoundedRectangle(cornerRadius: 12).fill(Color(hex: "#1F2937")))
                             
                             Text("Controls randomness in responses. Lower values make the AI more focused and deterministic, while higher values make it more creative and unpredictable.")
                                 .font(.system(size: 13))

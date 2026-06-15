@@ -4,18 +4,26 @@ struct ChatView: View {
     @EnvironmentObject var appState: AppState
     @State private var messageText: String = ""
     @State private var showAttachMenu: Bool = false
-    @State private var showProviderPicker: Bool = false
-    @State private var showSettingsSheet: Bool = false
-    @State private var showConversationsList: Bool = false
     @State private var messages: [ChatMessage] = []
     @State private var isLoading: Bool = false
+    @State private var showSettings: Bool = false
+    @State private var showConversations: Bool = false
+    @State private var showProviderPicker: Bool = false
     
     var body: some View {
         ZStack {
-            // Transparent — background handled by ContentView
-            Color.clear
+            // Background gradient
+            LinearGradient(
+                colors: [Color(hex: "#4C1D95"), Color(hex: "#1F1F2E"), Color.black],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 0) {
+                // Top nav bar — glass capsule
+                topNavBar
+                
                 if messages.isEmpty {
                     emptyStateView
                 } else {
@@ -29,10 +37,10 @@ struct ChatView: View {
                 attachMenuOverlay
             }
         }
-        .sheet(isPresented: $showSettingsSheet) {
-            SettingsSheetView()
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
-        .sheet(isPresented: $showConversationsList) {
+        .sheet(isPresented: $showConversations) {
             ConversationsListView()
         }
         .sheet(isPresented: $showProviderPicker) {
@@ -40,29 +48,97 @@ struct ChatView: View {
         }
     }
     
+    // MARK: - Top Nav Bar (glass capsule)
+    private var topNavBar: some View {
+        HStack(spacing: 10) {
+            // Settings + Conversations buttons in glass capsule
+            HStack(spacing: 8) {
+                Button(action: { showSettings = true }) {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.white)
+                }
+                
+                Button(action: { showConversations = true }) {
+                    Image(systemName: "bubble.left.fill")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.white)
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                Capsule()
+                    .fill(Color(hex: "#1F2937").opacity(0.9))
+            )
+            .background(
+                Capsule()
+                    .fill(.ultraThinMaterial)
+                    .opacity(0.4)
+            )
+            .overlay(
+                Capsule()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
+            )
+            
+            // Model selector
+            Button(action: { showProviderPicker = true }) {
+                HStack(spacing: 4) {
+                    Text(appState.selectedModel)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.4))
+                }
+            }
+            
+            Spacer()
+            
+            // New chat button
+            Button(action: { messages = [] }) {
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "#6D28D9"))
+                        .frame(width: 40, height: 40)
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.white)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 12)
+    }
+    
+    // MARK: - Empty State
     private var emptyStateView: some View {
         VStack(spacing: 0) {
             Spacer()
             
             VStack(spacing: 20) {
                 Text("Use models from your computer")
-                    .font(.system(size: 26, weight: .bold))
+                    .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                 
                 Text("Link to LM Studio and run larger models remotely from your computer. End-to-end encrypted.")
-                    .font(.system(size: 15, weight: .regular))
-                    .foregroundColor(.white.opacity(0.45))
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundColor(Color(hex: "#9CA3AF"))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
                 
                 Button(action: {}) {
                     Text("Try it")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                         .padding(.horizontal, 44)
-                        .padding(.vertical, 14)
-                        .liquidGlass(cornerRadius: 22, opacity: 0.1)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(hex: "#312E81"))
+                        )
                 }
                 .padding(.top, 4)
             }
@@ -70,24 +146,11 @@ struct ChatView: View {
             
             Spacer()
             
-            loadingIndicator
-            
             quickPromptsRow
         }
     }
     
-    private var loadingIndicator: some View {
-        HStack(spacing: 6) {
-            Text("Loading model...")
-                .font(.system(size: 13))
-                .foregroundColor(.white.opacity(0.35))
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .glassCapsule(opacity: 0.06)
-        .padding(.bottom, 16)
-    }
-    
+    // MARK: - Quick Prompts
     private var quickPromptsRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
@@ -106,6 +169,7 @@ struct ChatView: View {
         .padding(.bottom, 12)
     }
     
+    // MARK: - Messages List
     private var messagesListView: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
@@ -126,17 +190,19 @@ struct ChatView: View {
         }
     }
     
+    // MARK: - Bottom Input
     private var bottomInputArea: some View {
         VStack(spacing: 0) {
-            Divider().background(Color.white.opacity(0.06))
-            
             HStack(spacing: 12) {
                 Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 38, height: 38)
-                        .glassCapsule(opacity: 0.08)
+                    ZStack {
+                        Circle()
+                            .fill(Color(hex: "#374151"))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: "plus")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                    }
                 }
                 
                 TextField("Ask anything", text: $messageText)
@@ -144,17 +210,25 @@ struct ChatView: View {
                     .font(.system(size: 16))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 11)
-                    .glassCapsule(opacity: 0.06)
+                    .background(
+                        Capsule()
+                            .fill(Color(hex: "#1F2937").opacity(0.9))
+                    )
+                    .background(
+                        Capsule()
+                            .fill(.ultraThinMaterial)
+                            .opacity(0.3)
+                    )
                 
                 Button(action: sendMessage) {
-                    Image(systemName: "arrow.up")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(messageText.isEmpty ? .white.opacity(0.35) : .black)
-                        .frame(width: 38, height: 38)
-                        .background(
-                            Circle()
-                                .fill(messageText.isEmpty ? Color.white.opacity(0.12) : Color.white)
-                        )
+                    ZStack {
+                        Circle()
+                            .fill(messageText.isEmpty ? Color(hex: "#374151") : Color(hex: "#3B82F6"))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: "arrow.up")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                    }
                 }
                 .disabled(messageText.isEmpty)
             }
@@ -162,9 +236,10 @@ struct ChatView: View {
             .padding(.vertical, 12)
             .padding(.bottom, 8)
         }
-        .background(Color.black.opacity(0.4))
+        .background(Color(hex: "#1F2937").opacity(0.95))
     }
     
+    // MARK: - Attach Menu
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear
@@ -172,19 +247,25 @@ struct ChatView: View {
                 .onTapGesture { withAnimation(.spring()) { showAttachMenu = false } }
             
             VStack(alignment: .leading, spacing: 0) {
-                AttachMenuItem(icon: "folder.fill", title: "Attach file", subtitle: nil) {
-                    showAttachMenu = false
-                }
+                AttachMenuItem(icon: "folder.fill", title: "Attach file", subtitle: nil) { showAttachMenu = false }
                 Divider().background(Color.white.opacity(0.06))
-                AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") {
-                    showAttachMenu = false
-                }
+                AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { showAttachMenu = false }
                 Divider().background(Color.white.opacity(0.06))
-                AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") {
-                    showAttachMenu = false
-                }
+                AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { showAttachMenu = false }
             }
-            .liquidGlass(cornerRadius: 16, opacity: 0.1)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(hex: "#1F2937").opacity(0.95))
+            )
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+                    .opacity(0.3)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
+            )
             .padding(.leading, 14)
             .padding(.bottom, 80)
             .frame(width: 260)
@@ -192,6 +273,7 @@ struct ChatView: View {
         .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .bottomLeading)))
     }
     
+    // MARK: - Send Message
     private func sendMessage() {
         guard !messageText.isEmpty else { return }
         let userMsg = ChatMessage(content: messageText, isUser: true, timestamp: Date())
@@ -211,14 +293,12 @@ struct ChatView: View {
                     ollamaURL: appState.ollamaURL
                 )
                 await MainActor.run {
-                    let aiMsg = ChatMessage(content: response, isUser: false, timestamp: Date())
-                    messages.append(aiMsg)
+                    messages.append(ChatMessage(content: response, isUser: false, timestamp: Date()))
                     isLoading = false
                 }
             } catch {
                 await MainActor.run {
-                    let errorMsg = ChatMessage(content: "Error: \(error.localizedDescription)", isUser: false, timestamp: Date())
-                    messages.append(errorMsg)
+                    messages.append(ChatMessage(content: "Error: \(error.localizedDescription)", isUser: false, timestamp: Date()))
                     isLoading = false
                 }
             }
@@ -240,16 +320,28 @@ struct QuickPromptChip: View {
                     .foregroundColor(.white)
                 Text(subtitle)
                     .font(.system(size: 13))
-                    .foregroundColor(.white.opacity(0.4))
+                    .foregroundColor(Color(hex: "#9CA3AF"))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .liquidGlass(cornerRadius: 16, opacity: 0.08)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(hex: "#1F2937").opacity(0.9))
+            )
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.ultraThinMaterial)
+                    .opacity(0.3)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
+            )
         }
     }
 }
 
-// MARK: - Chat Bubble (Liquid Glass style)
+// MARK: - Chat Bubble
 struct ChatBubble: View {
     let message: ChatMessage
     
@@ -257,72 +349,18 @@ struct ChatBubble: View {
         HStack {
             if message.isUser { Spacer() }
             
-            if message.isUser {
-                // User bubble — dark glass
-                Text(message.content)
-                    .font(.system(size: 16))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 18)
-                            .fill(.ultraThinMaterial)
-                            .opacity(0.5)
-                    )
-                    .background(
-                        RoundedRectangle(cornerRadius: 18)
-                            .fill(Color.white.opacity(0.08))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 18)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-                    )
-                    .frame(maxWidth: 280, alignment: .trailing)
-            } else {
-                // AI bubble — purple glass
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(message.content)
-                        .font(.system(size: 16))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 18)
-                                .fill(.ultraThinMaterial)
-                                .opacity(0.4)
-                        )
-                        .background(
-                            RoundedRectangle(cornerRadius: 18)
-                                .fill(Color(hex: "#5A4FCF").opacity(0.25))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color.white.opacity(0.15), Color.white.opacity(0.03)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 0.5
-                                )
-                        )
-                    
-                    // Action icons under AI message
-                    HStack(spacing: 18) {
-                        Image(systemName: "hand.thumbsup")
-                        Image(systemName: "hand.thumbsdown")
-                        Image(systemName: "arrow.clockwise")
-                        Image(systemName: "doc.on.doc")
-                        Image(systemName: "ellipsis")
-                        Spacer()
-                        Image(systemName: "speaker.wave.2")
-                    }
-                    .font(.system(size: 16))
-                    .foregroundColor(.white.opacity(0.3))
-                    .padding(.leading, 4)
-                }
-                .frame(maxWidth: 300, alignment: .leading)
-                
+            Text(message.content)
+                .font(.system(size: 16))
+                .foregroundColor(.white)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(message.isUser ? Color(hex: "#374151") : Color(hex: "#4B5563"))
+                )
+                .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
+            
+            if !message.isUser {
                 Spacer()
             }
         }
@@ -343,7 +381,6 @@ struct AttachMenuItem: View {
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.white)
                     .frame(width: 28)
-                
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.system(size: 16, weight: .medium))
@@ -383,7 +420,7 @@ struct TypingIndicator: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .liquidGlass(cornerRadius: 18, opacity: 0.08)
+        .background(RoundedRectangle(cornerRadius: 12).fill(Color(hex: "#4B5563")))
         .onAppear { animating = true }
     }
 }

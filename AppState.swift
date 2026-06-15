@@ -72,8 +72,7 @@ struct Conversation: Identifiable {
 }
 
 class AppState: ObservableObject {
-    @Published var selectedTab: Int = 0
-    @Published var selectedProvider: AIProvider = .openai
+    @Published var selectedProvider: AIProvider = .ollama
     @Published var conversations: [Conversation] = []
     @Published var currentConversation: Conversation?
     @Published var apiKeys: [AIProvider: String] = [:]
@@ -82,26 +81,14 @@ class AppState: ObservableObject {
     @Published var showKeyboardOnLaunch: Bool = true
     @Published var customInstructions: String = ""
     @Published var personalizationEnabled: Bool = true
-    @Published var browserURL: String = "https://www.google.com"
+    @Published var selectedModel: String = "Gemma 3 QAT 1B"
     
     init() {
-        // Pre-set API keys
         apiKeys[.openrouter] = "76f439c65f4941278295e5552e463d11.BmVE0opP9oCNGcLfyTWbOGE-"
-        selectedProvider = .ollama
-        
-        conversations = [
-            Conversation(title: "Swift UI help", messages: [
-                ChatMessage(content: "Can you help me with SwiftUI animations?", isUser: true, timestamp: Date()),
-                ChatMessage(content: "Sure! SwiftUI has great built-in animation support.", isUser: false, timestamp: Date())
-            ], provider: .ollama, createdAt: Date()),
-            Conversation(title: "Recipe ideas", messages: [
-                ChatMessage(content: "Give me pasta recipe ideas", isUser: true, timestamp: Date())
-            ], provider: .gemini, createdAt: Date().addingTimeInterval(-3600))
-        ]
     }
 }
 
-// MARK: - Color Extension
+// MARK: - Color hex init
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
@@ -125,74 +112,5 @@ extension Color {
             blue:  Double(b) / 255,
             opacity: Double(a) / 255
         )
-    }
-}
-
-// MARK: - Liquid Glass Modifier
-struct LiquidGlassBackground: ViewModifier {
-    var cornerRadius: CGFloat = 16
-    var opacity: Double = 0.15
-    
-    func body(content: Content) -> some View {
-        content
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.6)
-            )
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(Color.white.opacity(opacity))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color.white.opacity(0.3), Color.white.opacity(0.05)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 0.5
-                    )
-            )
-            .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
-    }
-}
-
-struct GlassCapsuleBackground: ViewModifier {
-    var opacity: Double = 0.12
-    
-    func body(content: Content) -> some View {
-        content
-            .background(
-                Capsule()
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.6)
-            )
-            .background(
-                Capsule()
-                    .fill(Color.white.opacity(opacity))
-            )
-            .overlay(
-                Capsule()
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color.white.opacity(0.25), Color.white.opacity(0.05)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ),
-                        lineWidth: 0.5
-                    )
-            )
-    }
-}
-
-extension View {
-    func liquidGlass(cornerRadius: CGFloat = 16, opacity: Double = 0.15) -> some View {
-        modifier(LiquidGlassBackground(cornerRadius: cornerRadius, opacity: opacity))
-    }
-    
-    func glassCapsule(opacity: Double = 0.12) -> some View {
-        modifier(GlassCapsuleBackground(opacity: opacity))
     }
 }

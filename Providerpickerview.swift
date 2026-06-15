@@ -6,28 +6,26 @@ struct ProviderPickerView: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color(hex: "#6A5ACD"), Color(hex: "#2D1B69"), Color(hex: "#1A1A2E")],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            Color.black.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Custom header — NO navigation bar
+                // Header
                 HStack {
                     Button(action: { dismiss() }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.white.opacity(0.6))
-                            .frame(width: 32, height: 32)
-                            .liquidGlass(cornerRadius: 16, opacity: 0.1)
+                        ZStack {
+                            Circle()
+                                .fill(Color(hex: "#374151"))
+                                .frame(width: 40, height: 40)
+                            Image(systemName: "xmark")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.white)
+                        }
                     }
                     
                     Spacer()
                     
                     Text("Select Provider")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.white)
                     
                     Spacer()
@@ -35,7 +33,7 @@ struct ProviderPickerView: View {
                     Button(action: { dismiss() }) {
                         Text("Done")
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Color(hex: "#6366F1"))
+                            .foregroundColor(Color(hex: "#3B82F6"))
                     }
                 }
                 .padding(.horizontal, 16)
@@ -85,12 +83,15 @@ struct ProviderRow: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(Color(hex: "#6366F1"))
+                        .foregroundColor(Color(hex: "#3B82F6"))
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .liquidGlass(cornerRadius: 14, opacity: isSelected ? 0.15 : 0.06)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? Color(hex: "#1E3A5F").opacity(0.5) : Color(hex: "#1F2937"))
+            )
         }
     }
 }
