@@ -6,15 +6,25 @@ struct ConversationsListView: View {
     
     var body: some View {
         ZStack {
-            // Deep background
+            // Glass sheet background
             Color(red: 0.05, green: 0.05, blue: 0.08)
                 .ignoresSafeArea()
+            
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.15, green: 0.08, blue: 0.25).opacity(0.4),
+                    Color(red: 0.05, green: 0.05, blue: 0.08).opacity(0.9)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // Header
                 HStack {
                     Text("Chats")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.white)
                     
                     Spacer()
@@ -23,11 +33,7 @@ struct ConversationsListView: View {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 28, weight: .medium))
                             .foregroundColor(Color.white.opacity(0.5))
-                            .frame(width: 40, height: 40)
-                            .background(
-                                Circle()
-                                    .fill(Color.white.opacity(0.08))
-                            )
+                            .glassCircle(size: 40)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -37,24 +43,19 @@ struct ConversationsListView: View {
                 if appState.conversations.isEmpty {
                     Spacer()
                     
+                    // Empty state — glass card
                     VStack(spacing: 14) {
                         Image(systemName: "bubble.left.and.bubble.right.fill")
                             .font(.system(size: 44, weight: .light))
                             .foregroundColor(.white.opacity(0.08))
+                            .glowEffect(color: .white, radius: 16, opacity: 0.06)
                         
                         Text("No conversations yet")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white.opacity(0.2))
                     }
                     .padding(40)
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.white.opacity(0.03))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.white.opacity(0.05), lineWidth: 0.5)
-                    )
+                    .glassCard(cornerRadius: 24)
                     
                     Spacer()
                 } else {
@@ -76,7 +77,7 @@ struct ConversationsListView: View {
     }
 }
 
-// MARK: - Conversation Row
+// MARK: - Conversation Row — glass row
 struct ConversationRow: View {
     let conversation: Conversation
     let action: () -> Void
@@ -112,9 +113,6 @@ struct ConversationRow: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.white.opacity(0.05))
-        )
+        .glassRow(cornerRadius: 14)
     }
 }

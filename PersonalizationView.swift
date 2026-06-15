@@ -10,23 +10,29 @@ struct PersonalizationView: View {
     
     var body: some View {
         ZStack {
-            // Deep background
+            // Glass sheet background
             Color(red: 0.05, green: 0.05, blue: 0.08)
                 .ignoresSafeArea()
+            
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.15, green: 0.08, blue: 0.25).opacity(0.4),
+                    Color(red: 0.05, green: 0.05, blue: 0.08).opacity(0.9)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // Header with back and save buttons
                 HStack {
-                    // Back button
+                    // Back button — glass circle
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.white)
-                            .frame(width: 40, height: 40)
-                            .background(
-                                Circle()
-                                    .fill(Color.white.opacity(0.08))
-                            )
+                            .glassCircle(size: 40)
                     }
                     
                     Text("Personalization")
@@ -35,18 +41,15 @@ struct PersonalizationView: View {
                     
                     Spacer()
                     
-                    // Save button
+                    // Save button — glass capsule
                     Button(action: { withAnimation { appState.customInstructions = instructions; dismiss() } }) {
                         Text("Save")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
-                            .background(
-                                Capsule()
-                                    .fill(Color.white.opacity(0.08))
-                            )
                     }
+                    .glassCapsule()
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 18)
@@ -54,7 +57,7 @@ struct PersonalizationView: View {
                 
                 ScrollView {
                     VStack(spacing: 18) {
-                        // Enable customization toggle
+                        // Enable customization toggle — glass row
                         HStack(spacing: 14) {
                             Image(systemName: "slider.horizontal.3")
                                 .font(.system(size: 16, weight: .semibold))
@@ -62,7 +65,11 @@ struct PersonalizationView: View {
                                 .frame(width: 32, height: 32)
                                 .background(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.white.opacity(0.06))
+                                        .fill(.ultraThinMaterial)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                                        )
                                 )
                             
                             Text("Enable customization")
@@ -77,12 +84,9 @@ struct PersonalizationView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 14)
-                        .background(
-                            RoundedRectangle(cornerRadius: 14)
-                                .fill(Color.white.opacity(0.05))
-                        )
+                        .glassRow(cornerRadius: 14)
                         
-                        // Custom instructions
+                        // Custom instructions — glass card
                         VStack(alignment: .leading, spacing: 10) {
                             HStack(spacing: 6) {
                                 Image(systemName: "text.quote")
@@ -120,17 +124,10 @@ struct PersonalizationView: View {
                                     .padding(8)
                             }
                             .padding(14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .fill(Color.white.opacity(0.03))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(Color.white.opacity(0.05), lineWidth: 0.5)
-                            )
+                            .glassCard(cornerRadius: 14)
                         }
                         
-                        // Temperature
+                        // Temperature — glass row
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(spacing: 14) {
                                 Image(systemName: "thermometer.medium")
@@ -139,7 +136,11 @@ struct PersonalizationView: View {
                                     .frame(width: 32, height: 32)
                                     .background(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.white.opacity(0.06))
+                                            .fill(.ultraThinMaterial)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                                            )
                                     )
                                 
                                 Text("Temperature")
@@ -163,18 +164,12 @@ struct PersonalizationView: View {
                                     }
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.white.opacity(0.06))
-                                    )
+                                    .glassEffect(cornerRadius: 8)
                                 }
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .fill(Color.white.opacity(0.05))
-                            )
+                            .glassRow(cornerRadius: 14)
                             
                             Text("Controls randomness in responses. Lower values make the AI more focused and deterministic, while higher values make it more creative and unpredictable.")
                                 .font(.system(size: 13, weight: .medium))

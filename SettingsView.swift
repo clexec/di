@@ -7,29 +7,37 @@ struct SettingsView: View {
     
     var body: some View {
         ZStack {
-            // Deep background
+            // Glass sheet background
             Color(red: 0.05, green: 0.05, blue: 0.08)
                 .ignoresSafeArea()
+            
+            // Subtle gradient overlay for depth
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.15, green: 0.08, blue: 0.25).opacity(0.4),
+                    Color(red: 0.05, green: 0.05, blue: 0.08).opacity(0.9)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // Header
                 HStack {
                     Text("Settings")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.white)
+                        .innerGlow(cornerRadius: 4)
                     
                     Spacer()
                     
-                    // Close button
+                    // Close button — glass circle
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 28, weight: .medium))
                             .foregroundColor(Color.white.opacity(0.5))
-                            .frame(width: 40, height: 40)
-                            .background(
-                                Circle()
-                                    .fill(Color.white.opacity(0.08))
-                            )
+                            .glassCircle(size: 40)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -39,7 +47,7 @@ struct SettingsView: View {
                 // Sections
                 ScrollView {
                     VStack(spacing: 22) {
-                        // APP section
+                        // APP section — glass section
                         VStack(alignment: .leading, spacing: 8) {
                             Text("APP")
                                 .font(.system(size: 13, weight: .semibold))
@@ -48,22 +56,19 @@ struct SettingsView: View {
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "cube.box.fill", title: "Manage models") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                Divider().glassDivider().padding(.leading, 58)
                                 SettingsRow(icon: "link.circle.fill", title: "LM Link", badge: "New", badgeColor: .green) {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                Divider().glassDivider().padding(.leading, 58)
                                 SettingsRow(icon: "person.crop.circle.fill", title: "Personalization") { withAnimation { showPersonalization = true } }
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                Divider().glassDivider().padding(.leading, 58)
                                 SettingsToggleRow(icon: "keyboard.fill", title: "Show keyboard on launch", isOn: $appState.showKeyboardOnLaunch)
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                Divider().glassDivider().padding(.leading, 58)
                                 SettingsRow(icon: "trash.fill", title: "Delete conversation history", isDestructive: true) {}
                             }
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.white.opacity(0.05))
-                            )
+                            .glassSection(cornerRadius: 18)
                         }
                         
-                        // ABOUT section
+                        // ABOUT section — glass section
                         VStack(alignment: .leading, spacing: 8) {
                             Text("ABOUT")
                                 .font(.system(size: 13, weight: .semibold))
@@ -72,20 +77,17 @@ struct SettingsView: View {
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "doc.text.fill", title: "Terms & Conditions") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                Divider().glassDivider().padding(.leading, 58)
                                 SettingsRow(icon: "lock.shield.fill", title: "Privacy Policy") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                Divider().glassDivider().padding(.leading, 58)
                                 SettingsRow(icon: "doc.richtext.fill", title: "Licenses") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                Divider().glassDivider().padding(.leading, 58)
                                 SettingsRow(icon: "info.circle.fill", title: "Version 1.57.0") {}
                             }
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.white.opacity(0.05))
-                            )
+                            .glassSection(cornerRadius: 18)
                         }
                         
-                        // MORE section
+                        // MORE section — glass section
                         VStack(alignment: .leading, spacing: 8) {
                             Text("MORE")
                                 .font(.system(size: 13, weight: .semibold))
@@ -94,13 +96,10 @@ struct SettingsView: View {
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "square.and.arrow.up.fill", title: "Share the app") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                Divider().glassDivider().padding(.leading, 58)
                                 SettingsRow(icon: "at.circle.fill", title: "Follow us on X") {}
                             }
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.white.opacity(0.05))
-                            )
+                            .glassSection(cornerRadius: 18)
                         }
                         
                         // Footer
@@ -120,7 +119,7 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Settings Row
+// MARK: - Settings Row — glass icon background
 struct SettingsRow: View {
     let icon: String
     let title: String
@@ -132,14 +131,23 @@ struct SettingsRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                // Icon
+                // Icon — glass background
                 Image(systemName: icon)
                     .font(.system(size: 17, weight: .medium))
                     .foregroundColor(isDestructive ? .red.opacity(0.8) : .white.opacity(0.7))
                     .frame(width: 32, height: 32)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(isDestructive ? Color.red.opacity(0.1) : Color.white.opacity(0.06))
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(
+                                        isDestructive
+                                            ? Color.red.opacity(0.15)
+                                            : Color.white.opacity(0.1),
+                                        lineWidth: 0.5
+                                    )
+                            )
                     )
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -157,6 +165,10 @@ struct SettingsRow: View {
                                     Capsule()
                                         .fill(badgeColor.opacity(0.15))
                                 )
+                                .overlay(
+                                    Capsule()
+                                        .stroke(badgeColor.opacity(0.3), lineWidth: 0.5)
+                                )
                         }
                     }
                 }
@@ -171,7 +183,7 @@ struct SettingsRow: View {
     }
 }
 
-// MARK: - Settings Toggle Row
+// MARK: - Settings Toggle Row — glass icon
 struct SettingsToggleRow: View {
     let icon: String
     let title: String
@@ -179,14 +191,18 @@ struct SettingsToggleRow: View {
     
     var body: some View {
         HStack(spacing: 14) {
-            // Icon
+            // Icon — glass background
             Image(systemName: icon)
                 .font(.system(size: 17, weight: .medium))
                 .foregroundColor(.white.opacity(0.7))
                 .frame(width: 32, height: 32)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.white.opacity(0.06))
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                        )
                 )
             
             Text(title)

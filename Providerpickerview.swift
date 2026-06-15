@@ -6,15 +6,25 @@ struct ProviderPickerView: View {
     
     var body: some View {
         ZStack {
-            // Deep background
+            // Glass sheet background
             Color(red: 0.05, green: 0.05, blue: 0.08)
                 .ignoresSafeArea()
+            
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.15, green: 0.08, blue: 0.25).opacity(0.4),
+                    Color(red: 0.05, green: 0.05, blue: 0.08).opacity(0.9)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // Header
                 HStack {
                     Text("Select Provider")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.white)
                     
                     Spacer()
@@ -23,18 +33,14 @@ struct ProviderPickerView: View {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 28, weight: .medium))
                             .foregroundColor(Color.white.opacity(0.5))
-                            .frame(width: 40, height: 40)
-                            .background(
-                                Circle()
-                                    .fill(Color.white.opacity(0.08))
-                            )
+                            .glassCircle(size: 40)
                     }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 18)
                 .padding(.bottom, 16)
                 
-                // Provider list
+                // Provider list — glass rows
                 ScrollView {
                     VStack(spacing: 8) {
                         ForEach(AIProvider.allCases) { provider in
@@ -53,6 +59,7 @@ struct ProviderPickerView: View {
     }
 }
 
+// MARK: - Provider Row — glass row with active glow
 struct ProviderRow: View {
     let provider: AIProvider
     let isSelected: Bool
@@ -80,14 +87,42 @@ struct ProviderRow: View {
                     Image(systemName: "checkmark")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white.opacity(0.6))
+                        .activeGlow()
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.white.opacity(0.05))
-        )
+        .glassRow(cornerRadius: 14)
+        .if(isSelected, transform: { view in
+            view
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.5, green: 0.3, blue: 0.9).opacity(0.4),
+                                    Color(red: 0.3, green: 0.4, blue: 1.0).opacity(0.2)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                )
+                .activeGlow()
+        })
+    }
+}
+
+// MARK: - Conditional Modifier Helper
+extension View {
+    @ViewBuilder
+    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
     }
 }

@@ -1,21 +1,33 @@
 import SwiftUI
 import AVFoundation
 
-// MARK: - Gradient Background (matching reference design)
+// MARK: - Gradient Background (matching reference design — deep purple to dark navy)
 struct GradientBackgroundView: View {
     var body: some View {
         ZStack {
-            // Deep purple/violet at top transitioning to dark navy/black
+            // Richer, deeper gradient matching reference photos
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(red: 0.40, green: 0.18, blue: 0.70),  // Vibrant purple
-                    Color(red: 0.25, green: 0.12, blue: 0.50),   // Deep violet
-                    Color(red: 0.12, green: 0.08, blue: 0.28),   // Dark purple
-                    Color(red: 0.05, green: 0.05, blue: 0.12),   // Dark navy
-                    Color(red: 0.02, green: 0.02, blue: 0.05)   // Near black
+                    Color(red: 0.45, green: 0.15, blue: 0.75),  // Vibrant purple top
+                    Color(red: 0.30, green: 0.10, blue: 0.55),  // Deep violet
+                    Color(red: 0.18, green: 0.08, blue: 0.35),  // Dark indigo
+                    Color(red: 0.08, green: 0.05, blue: 0.18),   // Dark navy
+                    Color(red: 0.03, green: 0.02, blue: 0.06)   // Near black bottom
                 ]),
                 startPoint: .top,
                 endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            // Subtle radial glow at top center for depth
+            RadialGradient(
+                colors: [
+                    Color(red: 0.5, green: 0.2, blue: 0.8).opacity(0.15),
+                    Color.clear
+                ],
+                center: .top,
+                startRadius: 0,
+                endRadius: 500
             )
             .ignoresSafeArea()
         }
@@ -84,7 +96,6 @@ class LoopingVideoPlayerView: UIView {
         self.playerLayer = layer
         self.player = player
         
-        // Observe end to loop with 2s delay
         self.token = playerItem.observe(\.status, options: [.new]) { _, _ in }
         
         NotificationCenter.default.addObserver(
@@ -94,7 +105,6 @@ class LoopingVideoPlayerView: UIView {
             object: playerItem
         )
         
-        // Slow playback
         player.play()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             player.rate = 0.7

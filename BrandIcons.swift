@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Provider Icon View
+// MARK: - Provider Icon View — glass background
 struct ProviderIconView: View {
     let provider: AIProvider
     var size: CGFloat = 20
@@ -37,12 +37,26 @@ struct ProviderIconView: View {
         .frame(width: size, height: size)
         .background(
             RoundedRectangle(cornerRadius: size * 0.3)
-                .fill(Color.white.opacity(0.06))
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: size * 0.3)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.2),
+                                    Color.white.opacity(0.06)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.5
+                        )
+                )
         )
     }
 }
 
-// MARK: - Settings Icon View
+// MARK: - Settings Icon View — glass background
 struct SettingsIconView: View {
     let iconName: String
     var size: CGFloat = 16
@@ -54,7 +68,11 @@ struct SettingsIconView: View {
             .frame(width: 32, height: 32)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.white.opacity(0.06))
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                    )
             )
     }
 }

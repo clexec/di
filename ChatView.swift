@@ -16,7 +16,7 @@ struct ChatView: View {
             // Gradient background matching reference design
             GradientBackgroundView()
             
-            // Subtle video overlay (optional, can be disabled)
+            // Subtle video overlay
             VideoBackgroundView(videoName: "bg_video")
                 .ignoresSafeArea()
                 .opacity(0.25)
@@ -40,17 +40,13 @@ struct ChatView: View {
     // MARK: - Top Nav Bar
     private var topNavBar: some View {
         HStack(spacing: 8) {
-            // Settings + Chats — side by side, compact with glassEffect
+            // Settings + Chats — glass capsule button group
             HStack(spacing: 4) {
                 Button(action: { showSettings = true }) {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
-                        .frame(width: 36, height: 36)
-                        .background(
-                            Circle()
-                                .fill(Color.white.opacity(0.08))
-                        )
+                        .glassCircle(size: 36)
                 }
                 
                 Button(action: { showConversations = true }) {
@@ -58,7 +54,7 @@ struct ChatView: View {
                         Image(systemName: "bubble.left.fill")
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.white)
-                            .frame(width: 36, height: 36)
+                            .glassCircle(size: 36)
                         
                         // Glow effect for active state
                         Circle()
@@ -66,25 +62,13 @@ struct ChatView: View {
                             .frame(width: 36, height: 36)
                             .blur(radius: 8)
                     }
-                    .frame(width: 36, height: 36)
-                    .background(
-                        Circle()
-                            .fill(Color.white.opacity(0.08))
-                    )
                 }
             }
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
-            .background(
-                Capsule()
-                    .fill(.ultraThinMaterial)
-            )
-            .overlay(
-                Capsule()
-                    .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-            )
+            .glassCapsule()
             
-            // Model selector — tap to open popup
+            // Model selector — glass capsule dropdown
             Button(action: { withAnimation(.spring(response: 0.3)) { showModelPicker.toggle() } }) {
                 HStack(spacing: 4) {
                     Text(appState.selectedAIModel.displayName)
@@ -93,33 +77,22 @@ struct ChatView: View {
                         .lineLimit(1)
                     Image(systemName: "chevron.down")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.white.opacity(0.4))
+                        .foregroundColor(.white.opacity(0.5))
                         .rotationEffect(.degrees(showModelPicker ? 180 : 0))
                 }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(
-                Capsule()
-                    .fill(.ultraThinMaterial)
-            )
-            .overlay(
-                Capsule()
-                    .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-            )
+            .glassCapsule()
             
             Spacer()
             
-            // New chat button
+            // New chat button — glass circle
             Button(action: { withAnimation { messages = [] } }) {
                 Image(systemName: "square.and.pencil")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
-                    .frame(width: 36, height: 36)
-                    .background(
-                        Circle()
-                            .fill(Color.white.opacity(0.08))
-                    )
+                    .glassCircle(size: 36)
             }
         }
         .padding(.horizontal, 16)
@@ -134,7 +107,6 @@ struct ChatView: View {
                 .ignoresSafeArea()
                 .onTapGesture { withAnimation(.spring(response: 0.3)) { showModelPicker = false } }
             
-            // Compact popup with blur background
             VStack(spacing: 0) {
                 Text("Select model")
                     .font(.system(size: 12, weight: .semibold))
@@ -183,7 +155,7 @@ struct ChatView: View {
                     }
                     
                     Divider()
-                        .background(Color.white.opacity(0.06))
+                        .glassDivider(leadingInset: 14)
                         .padding(.horizontal, 14)
                     
                     Button(action: {
@@ -217,15 +189,7 @@ struct ChatView: View {
                 .padding(.bottom, 10)
             }
             .frame(width: 240)
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(.ultraThinMaterial)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-            )
-            .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+            .glassPopup(cornerRadius: 14)
             .transition(.opacity.combined(with: .scale(scale: 0.95)))
         }
     }
@@ -245,7 +209,8 @@ struct ChatView: View {
                     Image(systemName: "sparkles")
                         .font(.system(size: 48, weight: .light))
                         .foregroundColor(.white)
-                        .blur(radius: 8)
+                        .blur(radius: 12)
+                        .glowEffect(color: .white, radius: 20, opacity: 0.12)
                 }
                 
                 Text("Use models from your computer")
@@ -259,7 +224,7 @@ struct ChatView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
                 
-                // Try it button with outline and glow
+                // Try it button — glass capsule with gradient border
                 Button(action: {}) {
                     HStack(spacing: 8) {
                         Image(systemName: "bolt.fill")
@@ -270,34 +235,14 @@ struct ChatView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 36)
                     .padding(.vertical, 12)
-                    .background(
-                        Capsule()
-                            .fill(Color.white.opacity(0.08))
-                    )
-                    .overlay(
-                        Capsule()
-                            .stroke(
-                                LinearGradient(
-                                    colors: [.white.opacity(0.3), .white.opacity(0.1)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1
-                            )
-                    )
                 }
+                .glassCapsule()
+                .glowEffect(color: Color(red: 0.5, green: 0.3, blue: 0.9), radius: 16, opacity: 0.2)
                 .padding(.top, 4)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 28)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.ultraThinMaterial)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-            )
+            .glassCard(cornerRadius: 24)
             .padding(.horizontal, 20)
             
             Spacer()
@@ -314,18 +259,11 @@ struct ChatView: View {
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(
-                    Capsule()
-                        .fill(Color.white.opacity(0.06))
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
-                )
+                .glassCapsule()
                 .padding(.bottom, 8)
             }
             
-            // Quick prompts
+            // Quick prompts — glass chips
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     QuickPromptChip(icon: "book.fill", title: "Discover", subtitle: "my next book") { messageText = "Discover my next book" }
@@ -359,33 +297,26 @@ struct ChatView: View {
         }
     }
     
-    // MARK: - Bottom Input
+    // MARK: - Bottom Input Area — full glass
     private var bottomInputArea: some View {
         HStack(spacing: 10) {
-            // Plus button
+            // Plus button — glass
             Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
                 Image(systemName: "plus")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.white.opacity(0.08))
-                    )
+                    .glassCircle(size: 40)
             }
             
-            // Text field
+            // Text field — glass input
             TextField("Ask anything", text: $messageText)
                 .foregroundColor(.white)
                 .font(.system(size: 16, weight: .medium))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white.opacity(0.08))
-                )
+                .glassInput(cornerRadius: 16)
             
-            // Send button
+            // Send button — glass with active state
             Button(action: sendMessage) {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 32, weight: .bold))
@@ -393,16 +324,35 @@ struct ChatView: View {
                     .frame(width: 40, height: 40)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(messageText.isEmpty ? Color.white.opacity(0.04) : Color.white.opacity(0.08))
+                            .fill(.ultraThinMaterial)
                     )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(
+                                messageText.isEmpty
+                                    ? Color.white.opacity(0.06)
+                                    : LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.25),
+                                            Color.white.opacity(0.08)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                lineWidth: messageText.isEmpty ? 0.5 : 0.8
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    .scaleEffect(messageText.isEmpty ? 1.0 : 1.0)
             }
+            .disabled(messageText.isEmpty)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
         .padding(.bottom, 8)
     }
     
-    // MARK: - Attach Menu
+    // MARK: - Attach Menu — glass popup
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear.contentShape(Rectangle())
@@ -410,20 +360,12 @@ struct ChatView: View {
             
             VStack(alignment: .leading, spacing: 0) {
                 AttachMenuItem(icon: "doc.fill", title: "Attach file", subtitle: nil) { withAnimation { showAttachMenu = false } }
-                Divider().background(Color.white.opacity(0.06))
+                Divider().glassDivider().padding(.horizontal, 14)
                 AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
-                Divider().background(Color.white.opacity(0.06))
+                Divider().glassDivider().padding(.horizontal, 14)
                 AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(.ultraThinMaterial)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-            )
-            .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+            .glassPopup(cornerRadius: 14)
             .padding(.leading, 14)
             .padding(.bottom, 80)
         }
@@ -462,7 +404,7 @@ struct ChatView: View {
     }
 }
 
-// MARK: - Quick Prompt Chip
+// MARK: - Quick Prompt Chip — glass chip
 struct QuickPromptChip: View {
     let icon: String
     let title: String
@@ -484,18 +426,11 @@ struct QuickPromptChip: View {
         }
         .padding(.horizontal, 4)
         .padding(.vertical, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(0.06))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
-        )
+        .glassEffect(cornerRadius: 12)
     }
 }
 
-// MARK: - Chat Bubble
+// MARK: - Chat Bubble — glass style
 struct ChatBubble: View {
     let message: ChatMessage
     
@@ -515,39 +450,51 @@ struct ChatBubble: View {
                         .foregroundColor(.white)
                 }
                 
-                // Action buttons for AI messages
+                // Action buttons for AI messages — glass icon buttons
                 if !message.isUser {
                     HStack(spacing: 16) {
                         Button(action: {}) {
                             Image(systemName: "hand.thumbsup")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.3))
+                                .padding(6)
+                                .background(Circle().fill(.ultraThinMaterial))
                         }
                         Button(action: {}) {
                             Image(systemName: "hand.thumbsdown")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.3))
+                                .padding(6)
+                                .background(Circle().fill(.ultraThinMaterial))
                         }
                         Button(action: {}) {
                             Image(systemName: "arrow.clockwise")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.3))
+                                .padding(6)
+                                .background(Circle().fill(.ultraThinMaterial))
                         }
                         Button(action: {}) {
                             Image(systemName: "doc.on.doc")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.3))
+                                .padding(6)
+                                .background(Circle().fill(.ultraThinMaterial))
                         }
                         Button(action: {}) {
                             Image(systemName: "ellipsis")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.3))
+                                .padding(6)
+                                .background(Circle().fill(.ultraThinMaterial))
                         }
                         Spacer()
                         Button(action: {}) {
                             Image(systemName: "speaker.wave.2")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.3))
+                                .padding(6)
+                                .background(Circle().fill(.ultraThinMaterial))
                         }
                     }
                     .padding(.top, 4)
@@ -557,7 +504,22 @@ struct ChatBubble: View {
             .background(
                 message.isUser ?
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(white: 0.12)) :
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [
+                                        Color.white.opacity(0.2),
+                                        Color.white.opacity(0.06)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 0.7
+                            )
+                    )
+                    .innerGlow(cornerRadius: 16) :
                 Color.clear
             )
             
@@ -601,7 +563,7 @@ struct AttachMenuItem: View {
     }
 }
 
-// MARK: - Typing Indicator
+// MARK: - Typing Indicator — glass
 struct TypingIndicator: View {
     @State private var animating = false
     
@@ -618,10 +580,7 @@ struct TypingIndicator: View {
                 .frame(width: 6, height: 6)
         }
         .padding(.horizontal, 16).padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(0.06))
-        )
+        .glassEffect(cornerRadius: 12)
         .onAppear {
             withAnimation(.easeInOut(duration: 0.6).repeatForever()) {
                 animating = true
