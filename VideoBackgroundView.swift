@@ -20,10 +20,11 @@ struct VideoBackgroundView: UIViewRepresentable {
     }
 }
 
+@MainActor
 class LoopingVideoPlayerView: UIView {
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
-    private var observer: Any?
+    private var observer: NSObjectProtocol?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,13 +40,7 @@ class LoopingVideoPlayerView: UIView {
     
     func setup(videoName: String) {
         guard let url = Bundle.main.url(forResource: videoName, withExtension: "mp4") else {
-            print("Video not found: \(videoName).mp4 — checking bundle resources")
-            // Try alternative: check if file is in Documents or bundle root
-            if let altURL = Bundle.main.url(forResource: videoName, withExtension: "mp4", subdirectory: nil) {
-                setupPlayer(url: altURL)
-            } else {
-                print("Video definitely not found in bundle")
-            }
+            print("Video not found: \(videoName).mp4")
             return
         }
         setupPlayer(url: url)
@@ -69,7 +64,7 @@ class LoopingVideoPlayerView: UIView {
             forName: .AVPlayerItemDidPlayToEndTime,
             object: playerItem,
             queue: .main
-        ) { [weak self] _ in
+        ) { _ in
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 player.seek(to: .zero)
                 player.play()
