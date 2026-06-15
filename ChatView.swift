@@ -330,15 +330,15 @@ struct ChatView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(
                                 messageText.isEmpty
-                                    ? Color.white.opacity(0.06)
-                                    : LinearGradient(
+                                    ? AnyShapeStyle(Color.white.opacity(0.06))
+                                    : AnyShapeStyle(LinearGradient(
                                         colors: [
                                             Color.white.opacity(0.25),
                                             Color.white.opacity(0.08)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
-                                    ),
+                                    )),
                                 lineWidth: messageText.isEmpty ? 0.5 : 0.8
                             )
                     )
@@ -502,25 +502,29 @@ struct ChatBubble: View {
             }
             .padding(.horizontal, 14).padding(.vertical, 10)
             .background(
-                message.isUser ?
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-                    .overlay(
+                Group {
+                    if message.isUser {
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(0.2),
-                                        Color.white.opacity(0.06)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 0.7
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(
+                                        LinearGradient(
+                                            colors: [
+                                                Color.white.opacity(0.2),
+                                                Color.white.opacity(0.06)
+                                            ],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 0.7
+                                    )
                             )
-                    )
-                    .innerGlow(cornerRadius: 16) :
-                Color.clear
+                            .innerGlow(cornerRadius: 16)
+                    } else {
+                        Color.clear
+                    }
+                }
             )
             
             if !message.isUser { Spacer() }
