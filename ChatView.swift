@@ -8,7 +8,7 @@ struct ChatView: View {
     @State private var isLoading: Bool = false
     @State private var showSettings: Bool = false
     @State private var showConversations: Bool = false
-    @State private var showProviderPicker: Bool = false
+    @State private var showModelPicker: Bool = false
     @Namespace private var glassNamespace
     
     var body: some View {
@@ -21,44 +21,49 @@ struct ChatView: View {
                 bottomInputArea
             }
             
+            // Model picker popup overlay
+            if showModelPicker { modelPickerOverlay }
+            
             if showAttachMenu { attachMenuOverlay }
         }
         .sheet(isPresented: $showSettings) { SettingsView() }
         .sheet(isPresented: $showConversations) { ConversationsListView() }
-        .sheet(isPresented: $showProviderPicker) { ProviderPickerView() }
     }
     
-    // MARK: - Top Nav Bar — NO GlassEffectContainer, each button separate
+    // MARK: - Top Nav Bar
     private var topNavBar: some View {
         HStack(spacing: 12) {
-            // Settings button — separate, bigger
+            // Settings button
             Button(action: { showSettings = true }) {
                 Image(systemName: "gearshape.fill")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
+                    .frame(width: 44, height: 44)
             }
             .glassEffect(.regular.interactive())
             
-            // Chat list button — separate, bigger
+            // Chat list button
             Button(action: { showConversations = true }) {
                 Image(systemName: "bubble.left.fill")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
+                    .frame(width: 44, height: 44)
             }
             .glassEffect(.regular.interactive())
             
-            // Model selector button
-            Button(action: { withAnimation { showProviderPicker = true } }) {
+            // Model selector — tap to open popup
+            Button(action: { withAnimation(.spring(response: 0.3)) { showModelPicker.toggle() } }) {
                 HStack(spacing: 6) {
-                    ProviderIconView(provider: appState.selectedProvider, size: 16)
-                    Text(appState.selectedModel)
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white.opacity(0.7))
+                    Text(appState.selectedAIModel.displayName)
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.white)
-                    Image(systemName: "chevron.right")
+                    Image(systemName: "chevron.down")
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.4))
+                        .foregroundColor(.white.opacity(0.5))
+                        .rotationEffect(.degrees(showModelPicker ? 180 : 0))
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
@@ -67,12 +72,12 @@ struct ChatView: View {
             
             Spacer()
             
-            // New chat button — separate
+            // New chat button
             Button(action: { withAnimation { messages = [] } }) {
                 Image(systemName: "square.and.pencil")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
+                    .frame(width: 44, height: 44)
             }
             .glassEffect(.regular.interactive())
         }
@@ -81,13 +86,105 @@ struct ChatView: View {
         .padding(.bottom, 12)
     }
     
+    // MARK: - Model Picker Popup (overlay on chat, not a sheet)
+    private var modelPickerOverlay: some View {
+        ZStack {
+            // Dim background
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture { withAnimation(.spring(response: 0.3)) { showModelPicker = false } }
+            
+            // Popup card
+            VStack(spacing: 0) {
+                // Header
+                Text("Select model")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white.opacity(0.6))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 18)
+                    .padding(.bottom, 12)
+                
+                // Model list
+                VStack(spacing: 0) {
+                    ForEach(AIModel.availableModels) { model in
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3)) {
+                                appState.selectedAIModel = model
+                                appState.selectedModel = model.displayName
+                                showModelPicker = false
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                // Checkmark
+                                if appState.selectedAIModel == model {
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(.white)
+                                } else {
+                                    Color.clear.frame(width: 16)
+                                }
+                                
+                                Text(model.displayName)
+                                    .font(.system(size: 17, weight: .medium))
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+                        }
+                    }
+                    
+                    // Divider
+                    Divider().background(Color.white.opacity(0.08)).padding(.horizontal, 20)
+                    
+                    // LM Link row
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3)) { showModelPicker = false }
+                    }) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "link")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white.opacity(0.5))
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("LM Link")
+                                    .font(.system(size: 17, weight: .medium))
+                                    .foregroundColor(.white)
+                                Text("Login required")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.white.opacity(0.3))
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.2))
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 14)
+                    }
+                }
+                .padding(.bottom, 16)
+            }
+            .frame(width: 320)
+            .glassEffect(.regular)
+            .transition(.opacity.combined(with: .scale(scale: 0.95)))
+        }
+    }
+    
     // MARK: - Empty State
     private var emptyStateView: some View {
         VStack(spacing: 0) {
             Spacer()
             
             VStack(spacing: 20) {
-                ProviderIconView(provider: appState.selectedProvider, size: 48)
+                // App logo
+                Image(systemName: "sparkles")
+                    .font(.system(size: 44, weight: .light))
+                    .foregroundColor(.white.opacity(0.15))
                 
                 Text("Use models from your computer")
                     .font(.system(size: 24, weight: .bold))
@@ -118,12 +215,12 @@ struct ChatView: View {
             
             Spacer()
             
-            // Quick prompts — separate chips, NO GlassEffectContainer
+            // Quick prompts
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
-                    QuickPromptChip(icon: "dumbbell.fill", title: "Design", subtitle: "a workout routine") { messageText = "Design a workout routine" }
-                    QuickPromptChip(icon: "lightbulb.fill", title: "Explain", subtitle: "a complex topic simply") { messageText = "Explain a complex topic simply" }
-                    QuickPromptChip(icon: "camera.fill", title: "Master", subtitle: "smartphone photography") { messageText = "Master smartphone photography" }
+                    QuickPromptChip(icon: "book.fill", title: "Discover", subtitle: "my next book") { messageText = "Discover my next book" }
+                    QuickPromptChip(icon: "lightbulb.fill", title: "Tell me", subtitle: "something fascinating") { messageText = "Tell me something fascinating" }
+                    QuickPromptChip(icon: "pencil.line", title: "Help me", subtitle: "write an email") { messageText = "Help me write an email" }
                 }
                 .padding(.horizontal, 16)
             }
@@ -148,7 +245,7 @@ struct ChatView: View {
         }
     }
     
-    // MARK: - Bottom Input — NO GlassEffectContainer, separate elements
+    // MARK: - Bottom Input
     private var bottomInputArea: some View {
         HStack(spacing: 10) {
             // Plus button
@@ -156,7 +253,7 @@ struct ChatView: View {
                 Image(systemName: "plus")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
+                    .frame(width: 44, height: 44)
             }
             .glassEffect(.regular.interactive())
             
@@ -165,7 +262,7 @@ struct ChatView: View {
                 .foregroundColor(.white)
                 .font(.system(size: 16))
                 .padding(.horizontal, 16)
-                .padding(.vertical, 11)
+                .padding(.vertical, 12)
                 .glassEffect(.regular)
             
             // Send button
@@ -180,7 +277,7 @@ struct ChatView: View {
         .padding(.bottom, 8)
     }
     
-    // MARK: - Attach Menu — simple VStack, NO GlassEffectContainer
+    // MARK: - Attach Menu
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear.contentShape(Rectangle())
@@ -212,7 +309,7 @@ struct ChatView: View {
                 let response = try await AIService.shared.sendMessage(
                     provider: appState.selectedProvider, message: prompt,
                     apiKey: appState.apiKeys[appState.selectedProvider],
-                    model: appState.selectedProvider.defaultModel,
+                    model: appState.selectedAIModel.modelId,
                     systemPrompt: appState.personalizationEnabled ? appState.customInstructions : nil,
                     ollamaURL: appState.ollamaURL
                 )
