@@ -5,19 +5,53 @@ struct ConversationsListView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color(hex: "#0F0F1A").ignoresSafeArea()
+        ZStack {
+            LinearGradient(
+                colors: [Color(hex: "#6A5ACD"), Color(hex: "#2D1B69"), Color(hex: "#1A1A2E")],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Custom header — NO navigation bar
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white.opacity(0.6))
+                            .frame(width: 32, height: 32)
+                            .liquidGlass(cornerRadius: 16, opacity: 0.1)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("Conversations")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Button(action: { dismiss() }) {
+                        Text("Done")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(Color(hex: "#6366F1"))
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 
                 if appState.conversations.isEmpty {
+                    Spacer()
                     VStack(spacing: 12) {
                         Image(systemName: "bubble.left.and.bubble.right")
                             .font(.system(size: 40))
-                            .foregroundColor(.white.opacity(0.15))
+                            .foregroundColor(.white.opacity(0.12))
                         Text("No conversations yet")
                             .font(.system(size: 16))
-                            .foregroundColor(.white.opacity(0.3))
+                            .foregroundColor(.white.opacity(0.25))
                     }
+                    Spacer()
                 } else {
                     List {
                         ForEach(appState.conversations) { conversation in
@@ -41,14 +75,14 @@ struct ConversationsListView: View {
                                             .foregroundColor(.white)
                                         Text("\(conversation.messages.count) messages")
                                             .font(.system(size: 13))
-                                            .foregroundColor(.white.opacity(0.35))
+                                            .foregroundColor(.white.opacity(0.3))
                                     }
                                     
                                     Spacer()
                                     
                                     Image(systemName: "chevron.right")
                                         .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(.white.opacity(0.2))
+                                        .foregroundColor(.white.opacity(0.15))
                                 }
                                 .padding(.vertical, 4)
                             }
@@ -57,14 +91,6 @@ struct ConversationsListView: View {
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
-                }
-            }
-            .navigationTitle("Conversations")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
-                        .foregroundColor(Color(hex: "#6366F1"))
                 }
             }
         }

@@ -6,7 +6,7 @@ struct BrowserView: View {
     
     var body: some View {
         ZStack {
-            Color(hex: "#0F0F1A").ignoresSafeArea()
+            Color.clear
             
             VStack(spacing: 0) {
                 HStack(spacing: 12) {
@@ -20,16 +20,12 @@ struct BrowserView: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
-                    .background(
-                        Capsule()
-                            .fill(Color.white.opacity(0.07))
-                            .overlay(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
-                    )
+                    .glassCapsule(opacity: 0.07)
                     
                     Button(action: {}) {
                         Image(systemName: "arrow.clockwise")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.6))
+                            .foregroundColor(.white.opacity(0.5))
                     }
                 }
                 .padding(.horizontal, 16)
@@ -40,13 +36,13 @@ struct BrowserView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "globe")
                         .font(.system(size: 48))
-                        .foregroundColor(.white.opacity(0.15))
+                        .foregroundColor(.white.opacity(0.12))
                     Text("Browser")
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.4))
+                        .foregroundColor(.white.opacity(0.35))
                     Text("Web browsing coming soon")
                         .font(.system(size: 14))
-                        .foregroundColor(.white.opacity(0.25))
+                        .foregroundColor(.white.opacity(0.2))
                 }
                 
                 Spacer()

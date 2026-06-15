@@ -71,6 +71,7 @@ class AppState: ObservableObject {
     }
 }
 
+// MARK: - Color Extension
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
@@ -94,5 +95,74 @@ extension Color {
             blue:  Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+}
+
+// MARK: - Liquid Glass Modifier
+struct LiquidGlassBackground: ViewModifier {
+    var cornerRadius: CGFloat = 16
+    var opacity: Double = 0.15
+    
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(.ultraThinMaterial)
+                    .opacity(0.6)
+            )
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(Color.white.opacity(opacity))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.3), Color.white.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 0.5
+                    )
+            )
+            .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+    }
+}
+
+struct GlassCapsuleBackground: ViewModifier {
+    var opacity: Double = 0.12
+    
+    func body(content: Content) -> some View {
+        content
+            .background(
+                Capsule()
+                    .fill(.ultraThinMaterial)
+                    .opacity(0.6)
+            )
+            .background(
+                Capsule()
+                    .fill(Color.white.opacity(opacity))
+            )
+            .overlay(
+                Capsule()
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.25), Color.white.opacity(0.05)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 0.5
+                    )
+            )
+    }
+}
+
+extension View {
+    func liquidGlass(cornerRadius: CGFloat = 16, opacity: Double = 0.15) -> some View {
+        modifier(LiquidGlassBackground(cornerRadius: cornerRadius, opacity: opacity))
+    }
+    
+    func glassCapsule(opacity: Double = 0.12) -> some View {
+        modifier(GlassCapsuleBackground(opacity: opacity))
     }
 }

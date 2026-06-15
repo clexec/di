@@ -6,9 +6,41 @@ struct SettingsSheetView: View {
     @State private var apiKey: String = ""
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color(hex: "#0F0F1A").ignoresSafeArea()
+        ZStack {
+            LinearGradient(
+                colors: [Color(hex: "#6A5ACD"), Color(hex: "#2D1B69"), Color(hex: "#1A1A2E")],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Custom header — NO navigation bar
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white.opacity(0.6))
+                            .frame(width: 32, height: 32)
+                            .liquidGlass(cornerRadius: 16, opacity: 0.1)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("Quick Settings")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Button(action: { dismiss() }) {
+                        Text("Done")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(Color(hex: "#6366F1"))
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 
                 ScrollView {
                     VStack(spacing: 16) {
@@ -32,17 +64,13 @@ struct SettingsSheetView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("API Key")
                                 .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(.white.opacity(0.4))
+                                .foregroundColor(.white.opacity(0.35))
                             SecureField("sk-...", text: $apiKey)
                                 .foregroundColor(.white)
                                 .font(.system(size: 15))
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 12)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color.white.opacity(0.07))
-                                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white.opacity(0.08), lineWidth: 1))
-                                )
+                                .liquidGlass(cornerRadius: 10, opacity: 0.07)
                         }
                         
                         Button(action: {
@@ -61,14 +89,6 @@ struct SettingsSheetView: View {
                         }
                     }
                     .padding(16)
-                }
-            }
-            .navigationTitle("Quick Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
-                        .foregroundColor(Color(hex: "#6366F1"))
                 }
             }
         }
