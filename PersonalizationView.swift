@@ -22,7 +22,7 @@ struct PersonalizationView: View {
                         Image(systemName: "chevron.left").font(.system(size: 13, weight: .bold)).foregroundColor(.white).padding(10)
                     }
                     .glassEffect(.regular.interactive())
-                    .glassEffectID("backBtn", in: persNamespace)
+                    .glassEffectID(id: "backBtn", namespace: persNamespace)
                     
                     Spacer()
                     
@@ -34,7 +34,7 @@ struct PersonalizationView: View {
                         Text("Save").font(.system(size: 15, weight: .medium)).foregroundColor(.white.opacity(0.6)).padding(.horizontal, 14).padding(.vertical, 7)
                     }
                     .glassEffect(.regular.interactive().tint(.blue))
-                    .glassEffectID("saveBtn", in: persNamespace)
+                    .glassEffectID(id: "saveBtn", namespace: persNamespace)
                 }
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 
@@ -50,7 +50,7 @@ struct PersonalizationView: View {
                             }
                             .padding(.horizontal, 16).padding(.vertical, 14)
                             .glassEffect(.regular.interactive().tint(.green))
-                            .glassEffectID("toggleGlass", in: persNamespace)
+                            .glassEffectID(id: "toggleGlass", namespace: persNamespace)
                             
                             // Custom instructions — regular glass
                             VStack(alignment: .leading, spacing: 8) {
@@ -63,7 +63,7 @@ struct PersonalizationView: View {
                                 }
                                 .padding(12)
                                 .glassEffect(.regular)
-                                .glassEffectID("instructionsGlass", in: persNamespace)
+                                .glassEffectID(id: "instructionsGlass", namespace: persNamespace)
                             }
                             
                             // Temperature — regular glass with orange tint
@@ -83,7 +83,7 @@ struct PersonalizationView: View {
                                 }
                                 .padding(.horizontal, 16).padding(.vertical, 14)
                                 .glassEffect(.regular.interactive().tint(.orange))
-                                .glassEffectID("tempGlass", in: persNamespace)
+                                .glassEffectID(id: "tempGlass", namespace: persNamespace)
                                 
                                 Text("Controls randomness in responses. Lower values make the AI more focused and deterministic, while higher values make it more creative and unpredictable.")
                                     .font(.system(size: 13)).foregroundColor(.white.opacity(0.3)).padding(.horizontal, 4)

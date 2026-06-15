@@ -19,7 +19,7 @@ struct SettingsView: View {
                         Image(systemName: "xmark").font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(10)
                     }
                     .glassEffect(.regular.interactive())
-                    .glassEffectID("closeBtn", in: settingsNamespace)
+                    .glassEffectID(id: "closeBtn", namespace: settingsNamespace)
                     
                     Spacer()
                     
@@ -52,7 +52,7 @@ struct SettingsView: View {
                                         SettingsRow(icon: "trash.fill", iconColor: .red, title: "Delete conversation history", titleColor: .red, subtitle: nil) {}
                                     }
                                     .glassEffect(.regular)
-                                    .glassEffectID("appSection", in: settingsNamespace)
+                                    .glassEffectID(id: "appSection", namespace: settingsNamespace)
                                 }
                             }
                             
@@ -71,7 +71,7 @@ struct SettingsView: View {
                                         SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "Version 1.57.0", subtitle: nil) {}
                                     }
                                     .glassEffect(.regular.tint(.blue))
-                                    .glassEffectID("aboutSection", in: settingsNamespace)
+                                    .glassEffectID(id: "aboutSection", namespace: settingsNamespace)
                                 }
                             }
                             
@@ -84,7 +84,7 @@ struct SettingsView: View {
                                         SettingsRow(icon: "paperplane.fill", iconColor: .yellow, title: "Share the app", subtitle: nil) {}
                                     }
                                     .glassEffect(.regular.interactive().tint(.yellow))
-                                    .glassEffectID("moreSection", in: settingsNamespace)
+                                    .glassEffectID(id: "moreSection", namespace: settingsNamespace)
                                 }
                             }
                         }
