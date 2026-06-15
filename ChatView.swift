@@ -6,12 +6,20 @@ struct ChatView: View {
     @State private var showAttachMenu: Bool = false
     @State private var messages: [ChatMessage] = []
     @State private var isLoading: Bool = false
+    @State private var showSettings: Bool = false
+    @State private var showConversations: Bool = false
     @State private var showModelPicker: Bool = false
     @State private var showProviderPicker: Bool = false
     
     var body: some View {
         ZStack {
-            Color.appBackground.ignoresSafeArea()
+            // Video background — only in chat
+            VideoBackgroundView(videoName: "bg_video")
+                .ignoresSafeArea()
+                .opacity(0.35)
+            
+            // Dark overlay so content is readable
+            Color.black.opacity(0.4).ignoresSafeArea()
             
             VStack(spacing: 0) {
                 topNavBar
@@ -24,15 +32,28 @@ struct ChatView: View {
             
             if showAttachMenu { attachMenuOverlay }
         }
+        .sheet(isPresented: $showSettings) { SettingsView() }
+        .sheet(isPresented: $showConversations) { ConversationsListView() }
         .sheet(isPresented: $showProviderPicker) { ProviderPickerView() }
     }
     
     // MARK: - Top Nav Bar
     private var topNavBar: some View {
         HStack(spacing: 10) {
-            // Provider button
-            Button(action: { showProviderPicker = true }) {
-                ProviderIconView(provider: appState.selectedProvider, size: 18)
+            // Settings button
+            Button(action: { showSettings = true }) {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white)
+                    .frame(width: 42, height: 42)
+            }
+            .glassEffect(.regular.interactive())
+            
+            // Chats button
+            Button(action: { showConversations = true }) {
+                Image(systemName: "bubble.left.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white)
                     .frame(width: 42, height: 42)
             }
             .glassEffect(.regular.interactive())
@@ -259,7 +280,7 @@ struct ChatView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .padding(.bottom, 56) // Space for tab bar
+        .padding(.bottom, 8)
     }
     
     // MARK: - Attach Menu
@@ -275,7 +296,7 @@ struct ChatView: View {
             }
             .glassEffect(.regular)
             .padding(.leading, 14)
-            .padding(.bottom, 136) // Above input + tab bar
+            .padding(.bottom, 80)
             .frame(width: 260)
         }
         .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .bottomLeading)))

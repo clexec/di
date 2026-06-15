@@ -2,22 +2,35 @@ import SwiftUI
 
 struct ConversationsListView: View {
     @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         ZStack {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header (no close button — it's a tab)
+                // Header with close button
                 HStack {
-                    Text("Chats")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
+                    Button(action: { withAnimation { dismiss() } }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.8))
+                            .frame(width: 32, height: 32)
+                    }
+                    .glassEffect(.regular.interactive())
+                    
                     Spacer()
+                    
+                    Text("Conversations")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Color.clear.frame(width: 32, height: 32)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 
                 if appState.conversations.isEmpty {
                     Spacer()
@@ -34,7 +47,7 @@ struct ConversationsListView: View {
                 } else {
                     List {
                         ForEach(appState.conversations) { conversation in
-                            Button(action: { withAnimation { appState.currentConversation = conversation } }) {
+                            Button(action: { withAnimation { appState.currentConversation = conversation; dismiss() } }) {
                                 HStack(spacing: 12) {
                                     ProviderIconView(provider: conversation.provider, size: 22)
                                         .frame(width: 36, height: 36)
@@ -64,7 +77,6 @@ struct ConversationsListView: View {
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
-                    .padding(.bottom, 80)
                 }
             }
         }

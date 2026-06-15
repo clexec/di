@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) var dismiss
     @State private var showPersonalization: Bool = false
     
     var body: some View {
@@ -9,18 +10,30 @@ struct SettingsView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header (no close button — it's a tab)
+                // Header with close button
                 HStack {
-                    Text("Settings")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
+                    Button(action: { withAnimation { dismiss() } }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.8))
+                            .frame(width: 32, height: 32)
+                    }
+                    .glassEffect(.regular.interactive())
+                    
                     Spacer()
+                    
+                    Text("Settings")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Color.clear.frame(width: 32, height: 32)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 
-                // Sections — NO ovals, NO glass on containers
+                // Sections — NO ovals
                 ScrollView {
                     VStack(spacing: 16) {
                         // APP section
@@ -81,7 +94,7 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
-                    .padding(.bottom, 100) // Space for tab bar
+                    .padding(.bottom, 32)
                 }
             }
         }
