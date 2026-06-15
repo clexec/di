@@ -90,7 +90,7 @@ struct OpenAILogo: Shape {
 }
 
 // MARK: - Provider Icon View
-// Updated icons with borders/outlines
+// Better SF Symbols for each provider with borders
 
 struct ProviderIconView: View {
     let provider: AIProvider
@@ -105,23 +105,23 @@ struct ProviderIconView: View {
                     .frame(width: size, height: size)
             case .deepseek:
                 Image(systemName: "waveform.path.ecg")
-                    .font(.system(size: size * 0.8, weight: .medium))
+                    .font(.system(size: size * 0.75, weight: .medium))
                     .foregroundColor(.white.opacity(0.85))
             case .gemini:
                 Image(systemName: "sparkles")
-                    .font(.system(size: size * 0.8, weight: .medium))
+                    .font(.system(size: size * 0.75, weight: .medium))
                     .foregroundColor(.white.opacity(0.85))
             case .openrouter:
                 Image(systemName: "arrow.triangle.branch")
-                    .font(.system(size: size * 0.8, weight: .medium))
+                    .font(.system(size: size * 0.75, weight: .medium))
                     .foregroundColor(.white.opacity(0.85))
             case .ollama:
                 Image(systemName: "desktopcomputer")
-                    .font(.system(size: size * 0.8, weight: .medium))
+                    .font(.system(size: size * 0.75, weight: .medium))
                     .foregroundColor(.white.opacity(0.85))
             case .custom:
                 Image(systemName: "terminal")
-                    .font(.system(size: size * 0.8, weight: .medium))
+                    .font(.system(size: size * 0.75, weight: .medium))
                     .foregroundColor(.white.opacity(0.85))
             }
         }
@@ -143,9 +143,9 @@ struct SettingsIconView: View {
         Image(systemName: iconName)
             .font(.system(size: size, weight: .medium))
             .foregroundColor(.white.opacity(0.7))
-            .frame(width: 30, height: 30)
+            .frame(width: 34, height: 34)
             .overlay(
-                RoundedRectangle(cornerRadius: 7)
+                RoundedRectangle(cornerRadius: 8)
                     .stroke(Color.white.opacity(0.12), lineWidth: 1)
             )
     }

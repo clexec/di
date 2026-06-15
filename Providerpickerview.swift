@@ -9,10 +9,10 @@ struct ProviderPickerView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — title left, close RIGHT, bigger with glass
+                // Header — bigger close with glass
                 HStack {
                     Text("Select Provider")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
                     
                     Spacer()
@@ -23,23 +23,25 @@ struct ProviderPickerView: View {
                             .foregroundColor(.white.opacity(0.6))
                             .frame(width: 44, height: 44)
                     }
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .glassEffect(.regular.interactive())
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
+                .padding(.horizontal, 20)
+                .padding(.top, 18)
+                .padding(.bottom, 16)
                 
-                // Provider list — NO ovals, glassEffect rows
+                // Provider list — glassEffect rows, NO ovals
                 ScrollView {
-                    VStack(spacing: 6) {
+                    VStack(spacing: 8) {
                         ForEach(AIProvider.allCases) { provider in
                             ProviderRow(provider: provider, isSelected: appState.selectedProvider == provider) {
                                 withAnimation { appState.selectedProvider = provider; dismiss() }
                             }
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 32)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .padding(.bottom, 40)
                 }
             }
         }
@@ -54,13 +56,9 @@ struct ProviderRow: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 14) {
+            HStack(spacing: 16) {
                 ProviderIconView(provider: provider, size: 24)
                     .frame(width: 36, height: 36)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                    )
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(provider.rawValue)
@@ -77,10 +75,10 @@ struct ProviderRow: View {
                         .foregroundColor(.white.opacity(0.7))
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
         .glassEffect(isSelected ? .regular.interactive() : .clear.interactive())
     }
 }

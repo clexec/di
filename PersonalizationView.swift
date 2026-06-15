@@ -13,39 +13,39 @@ struct PersonalizationView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — title left, save + close RIGHT, bigger close button with glass
+                // Header — bigger close with glass
                 HStack {
                     Text("Personalization")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
                     
                     Spacer()
                     
-                    // Save button
                     Button(action: { withAnimation { appState.customInstructions = instructions; dismiss() } }) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 28, weight: .medium))
                             .foregroundColor(.white.opacity(0.7))
                             .frame(width: 44, height: 44)
                     }
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .glassEffect(.regular.interactive())
                     
-                    // Close button — RIGHT, bigger, with glassEffect
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 28, weight: .medium))
                             .foregroundColor(.white.opacity(0.6))
                             .frame(width: 44, height: 44)
                     }
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .glassEffect(.regular.interactive())
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
+                .padding(.horizontal, 20)
+                .padding(.top, 18)
+                .padding(.bottom, 16)
                 
-                // Content
                 ScrollView {
-                    VStack(spacing: 16) {
-                        // Toggle — green tint, NO oval, use glassEffect
+                    VStack(spacing: 20) {
+                        // Toggle — green, NO oval
                         HStack {
                             Image(systemName: "slider.horizontal.3")
                                 .font(.system(size: 17, weight: .semibold))
@@ -58,9 +58,9 @@ struct PersonalizationView: View {
                                 .labelsHidden()
                                 .tint(.green)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 16)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                         .glassEffect(.regular.interactive())
                         
                         // Custom instructions
@@ -73,7 +73,7 @@ struct PersonalizationView: View {
                                     .font(.system(size: 14, weight: .bold))
                                     .foregroundColor(.white.opacity(0.4))
                             }
-                            .padding(.leading, 4)
+                            .padding(.leading, 6)
                             
                             ZStack(alignment: .bottomTrailing) {
                                 TextEditor(text: $instructions)
@@ -100,12 +100,12 @@ struct PersonalizationView: View {
                                     .foregroundColor(.white.opacity(0.25))
                                     .padding(8)
                             }
-                            .padding(12)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .padding(14)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                             .glassEffect(.regular)
                         }
                         
-                        // Temperature — NO oval, use glassEffect
+                        // Temperature — NO oval
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Image(systemName: "thermometer.medium")
@@ -131,22 +131,23 @@ struct PersonalizationView: View {
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
                                 }
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                                 .glassEffect(.clear.interactive())
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 14)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 16)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                             .glassEffect(.regular.interactive())
                             
                             Text("Controls randomness in responses. Lower values make the AI more focused and deterministic, while higher values make it more creative and unpredictable.")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.3))
-                                .padding(.horizontal, 4)
+                                .padding(.horizontal, 6)
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 32)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .padding(.bottom, 40)
                 }
             }
         }

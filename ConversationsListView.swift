@@ -9,10 +9,10 @@ struct ConversationsListView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — title left, close RIGHT, bigger with glass
+                // Header — bigger close with glass
                 HStack {
                     Text("Chats")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
                     
                     Spacer()
@@ -23,10 +23,12 @@ struct ConversationsListView: View {
                             .foregroundColor(.white.opacity(0.6))
                             .frame(width: 44, height: 44)
                     }
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .glassEffect(.regular.interactive())
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
+                .padding(.horizontal, 20)
+                .padding(.top, 18)
+                .padding(.bottom, 16)
                 
                 if appState.conversations.isEmpty {
                     Spacer()
