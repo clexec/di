@@ -10,36 +10,41 @@ struct PersonalizationView: View {
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
+                // Header with glass buttons
                 HStack {
+                    // Close button — new style with glassEffect
                     Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "chevron.left.circle.fill")
-                            .font(.system(size: 22, weight: .medium))
-                            .foregroundColor(.white.opacity(0.6))
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.8))
+                            .frame(width: 32, height: 32)
                     }
+                    .glassEffect(.regular.interactive())
                     
                     Spacer()
                     
-                    Text("Personalization").font(.system(size: 20, weight: .medium)).foregroundColor(.white)
+                    Text("Personalization")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.white)
                     
                     Spacer()
                     
+                    // Save button — proper SF Symbol with glassEffect
                     Button(action: { withAnimation { appState.customInstructions = instructions; dismiss() } }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 16))
-                            Text("Save")
-                                .font(.system(size: 15, weight: .medium))
-                        }
-                        .foregroundColor(.white.opacity(0.7))
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.8))
+                            .frame(width: 32, height: 32)
                     }
+                    .glassEffect(.regular.interactive())
                 }
-                .padding(.horizontal, 16).padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 
-                // Content — NO GlassEffectContainer
+                // Content — NO ovals
                 ScrollView {
                     VStack(spacing: 16) {
                         // Toggle
@@ -47,11 +52,14 @@ struct PersonalizationView: View {
                             Image(systemName: "slider.horizontal.3")
                                 .font(.system(size: 16))
                                 .foregroundColor(.white.opacity(0.6))
-                            Text("Enable customization").font(.system(size: 16, weight: .medium)).foregroundColor(.white)
+                            Text("Enable customization")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white)
                             Spacer()
                             Toggle("", isOn: $appState.personalizationEnabled).labelsHidden()
                         }
-                        .padding(.horizontal, 16).padding(.vertical, 14)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
                         .glassEffect(.regular.interactive())
                         
                         // Custom instructions
@@ -60,13 +68,36 @@ struct PersonalizationView: View {
                                 Image(systemName: "text.quote")
                                     .font(.system(size: 12))
                                     .foregroundColor(.white.opacity(0.4))
-                                Text("Custom Instructions").font(.system(size: 13, weight: .medium)).foregroundColor(.white.opacity(0.4))
-                            }.padding(.leading, 4)
+                                Text("Custom Instructions")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.4))
+                            }
+                            .padding(.leading, 4)
                             
                             ZStack(alignment: .bottomTrailing) {
-                                TextEditor(text: $instructions).foregroundColor(.white).font(.system(size: 15)).scrollContentBackground(.hidden).background(Color.clear).frame(minHeight: 160)
-                                    .overlay(Group { if instructions.isEmpty { Text("Customize how the AI responds").foregroundColor(.white.opacity(0.2)).font(.system(size: 15)).padding(.top, 8).padding(.leading, 5).allowsHitTesting(false) } }, alignment: .topLeading)
-                                Text("\(instructions.count)/1 000").font(.system(size: 12)).foregroundColor(.white.opacity(0.25)).padding(8)
+                                TextEditor(text: $instructions)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 15))
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.clear)
+                                    .frame(minHeight: 160)
+                                    .overlay(
+                                        Group {
+                                            if instructions.isEmpty {
+                                                Text("Customize how the AI responds")
+                                                    .foregroundColor(.white.opacity(0.2))
+                                                    .font(.system(size: 15))
+                                                    .padding(.top, 8)
+                                                    .padding(.leading, 5)
+                                                    .allowsHitTesting(false)
+                                            }
+                                        },
+                                        alignment: .topLeading
+                                    )
+                                Text("\(instructions.count)/1 000")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.white.opacity(0.25))
+                                    .padding(8)
                             }
                             .padding(12)
                             .glassEffect(.regular)
@@ -78,26 +109,41 @@ struct PersonalizationView: View {
                                 Image(systemName: "thermometer.medium")
                                     .font(.system(size: 16))
                                     .foregroundColor(.white.opacity(0.6))
-                                Text("Temperature").font(.system(size: 16, weight: .semibold)).foregroundColor(.white)
+                                Text("Temperature")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
                                 Spacer()
                                 Menu {
-                                    ForEach(temperatureOptions, id: \.self) { option in Button(option) { withAnimation { temperatureOption = option } } }
+                                    ForEach(temperatureOptions, id: \.self) { option in
+                                        Button(option) { withAnimation { temperatureOption = option } }
+                                    }
                                 } label: {
                                     HStack(spacing: 4) {
-                                        Text(temperatureOption).font(.system(size: 15)).foregroundColor(.white.opacity(0.45))
-                                        Image(systemName: "chevron.up.chevron.down").font(.system(size: 11)).foregroundColor(.white.opacity(0.35))
-                                    }.padding(.horizontal, 10).padding(.vertical, 6)
+                                        Text(temperatureOption)
+                                            .font(.system(size: 15))
+                                            .foregroundColor(.white.opacity(0.45))
+                                        Image(systemName: "chevron.up.chevron.down")
+                                            .font(.system(size: 11))
+                                            .foregroundColor(.white.opacity(0.35))
+                                    }
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
                                 }
                                 .glassEffect(.clear.interactive())
                             }
-                            .padding(.horizontal, 16).padding(.vertical, 14)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
                             .glassEffect(.regular.interactive())
                             
                             Text("Controls randomness in responses. Lower values make the AI more focused and deterministic, while higher values make it more creative and unpredictable.")
-                                .font(.system(size: 13)).foregroundColor(.white.opacity(0.3)).padding(.horizontal, 4)
+                                .font(.system(size: 13))
+                                .foregroundColor(.white.opacity(0.3))
+                                .padding(.horizontal, 4)
                         }
                     }
-                    .padding(.horizontal, 16).padding(.top, 8).padding(.bottom, 32)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 32)
                 }
             }
         }

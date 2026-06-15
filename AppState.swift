@@ -1,6 +1,11 @@
 import SwiftUI
 import Combine
 
+// MARK: - App Background Color
+extension Color {
+    static let appBackground = Color(red: 0.12, green: 0.12, blue: 0.14)
+}
+
 enum AIProvider: String, CaseIterable, Identifiable {
     case openai = "OpenAI"
     case deepseek = "DeepSeek"
@@ -11,7 +16,14 @@ enum AIProvider: String, CaseIterable, Identifiable {
     
     var id: String { rawValue }
     var icon: String {
-        switch self { case .openai: "sparkles"; case .deepseek: "waveform"; case .gemini: "star.circle"; case .openrouter: "arrow.triangle.branch"; case .ollama: "cloud.fill"; case .custom: "terminal" }
+        switch self {
+        case .openai: "brain"
+        case .deepseek: "waveform.path.ecg"
+        case .gemini: "star.circle"
+        case .openrouter: "network"
+        case .ollama: "server.rack"
+        case .custom: "terminal"
+        }
     }
     var defaultModel: String {
         switch self { case .openai: "gpt-4o-mini"; case .deepseek: "deepseek-chat"; case .gemini: "gemini-pro"; case .openrouter: "openai/gpt-4o-mini"; case .ollama: "llama3.2"; case .custom: "" }
@@ -38,10 +50,7 @@ struct AIModel: Identifiable, Equatable {
     
     static let lmLink = AIModel(name: "LM Link", subtitle: "Login required", provider: .ollama, modelId: "lm-link")
     
-    var displayName: String {
-        if let subtitle { return "\(name) (\(subtitle))" }
-        return name
-    }
+    var displayName: String { name }
 }
 
 struct ChatMessage: Identifiable { let id = UUID(); let content: String; let isUser: Bool; let timestamp: Date }
@@ -56,7 +65,7 @@ class AppState: ObservableObject {
     @Published var customInstructions: String = ""
     @Published var personalizationEnabled: Bool = true
     @Published var selectedModel: String = "Gemma 3 QAT 1B"
-    @Published var selectedAIModel: AIModel = AIModel.availableModels[3] // Gemma 3 QAT 1B
+    @Published var selectedAIModel: AIModel = AIModel.availableModels[3]
     @Published var showKeyboardOnLaunch: Bool = true
     
     init() { apiKeys[.openrouter] = "76f439c65f4941278295e5552e463d11.BmVE0opP9oCNGcLfyTWbOGE-" }

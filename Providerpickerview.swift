@@ -6,39 +6,53 @@ struct ProviderPickerView: View {
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
+                // Header with glass buttons
                 HStack {
+                    // Close button — new style with glassEffect
                     Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 22, weight: .medium))
-                            .foregroundColor(.white.opacity(0.6))
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.8))
+                            .frame(width: 32, height: 32)
                     }
+                    .glassEffect(.regular.interactive())
                     
                     Spacer()
                     
-                    Text("Select Provider").font(.system(size: 20, weight: .medium)).foregroundColor(.white)
+                    Text("Select Provider")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.white)
                     
                     Spacer()
                     
+                    // Done button with glassEffect
                     Button(action: { withAnimation { dismiss() } }) {
-                        Text("Done").font(.system(size: 15, weight: .semibold)).foregroundColor(.white.opacity(0.7))
+                        Text("Done")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.8))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
                     }
+                    .glassEffect(.regular.interactive())
                 }
-                .padding(.horizontal, 16).padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 
-                // Provider list — NO GlassEffectContainer
+                // Provider list — NO ovals
                 ScrollView {
-                    VStack(spacing: 8) {
+                    VStack(spacing: 6) {
                         ForEach(AIProvider.allCases) { provider in
                             ProviderRow(provider: provider, isSelected: appState.selectedProvider == provider) {
                                 withAnimation { appState.selectedProvider = provider; dismiss() }
                             }
                         }
                     }
-                    .padding(.horizontal, 16).padding(.top, 8)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 32)
                 }
             }
         }
@@ -54,22 +68,28 @@ struct ProviderRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                ProviderIconView(provider: provider, size: 28)
-                    .frame(width: 40, height: 40)
+                ProviderIconView(provider: provider, size: 24)
+                    .frame(width: 36, height: 36)
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(provider.rawValue).font(.system(size: 16, weight: .medium)).foregroundColor(.white)
-                    Text(provider.defaultModel).font(.system(size: 12)).foregroundColor(.white.opacity(0.3))
+                    Text(provider.rawValue)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white)
+                    Text(provider.defaultModel)
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.3))
                 }
                 Spacer()
                 if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 20))
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white.opacity(0.7))
                 }
             }
-            .padding(.horizontal, 16).padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
-        .glassEffect(isSelected ? .regular.interactive() : .clear.interactive())
+        .background(isSelected ? Color.white.opacity(0.06) : Color.clear)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

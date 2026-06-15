@@ -2,38 +2,33 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
-    @Environment(\.dismiss) var dismiss
     @State private var showPersonalization: Bool = false
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
+                // Header (no close button — it's a tab)
                 HStack {
-                    Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 22, weight: .medium))
-                            .foregroundColor(.white.opacity(0.6))
-                    }
-                    
+                    Text("Settings")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(.white)
                     Spacer()
-                    
-                    Text("Settings").font(.system(size: 20, weight: .medium)).foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    Color.clear.frame(width: 22, height: 22)
                 }
-                .padding(.horizontal, 16).padding(.vertical, 12)
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
                 
-                // Sections — NO GlassEffectContainer
+                // Sections — NO ovals, NO glass on containers
                 ScrollView {
-                    VStack(spacing: 12) {
+                    VStack(spacing: 16) {
                         // APP section
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("APP").font(.system(size: 12, weight: .medium)).foregroundColor(.white.opacity(0.4)).padding(.leading, 4)
+                            Text("APP")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.white.opacity(0.4))
+                                .padding(.leading, 4)
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "cube.box.fill", title: "Manage models") {}
@@ -46,12 +41,16 @@ struct SettingsView: View {
                                 Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
                                 SettingsRow(icon: "trash.circle.fill", title: "Delete conversation history", isDestructive: true) {}
                             }
-                            .glassEffect(.regular)
+                            .background(Color.white.opacity(0.03))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
                         
                         // ABOUT section
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("ABOUT").font(.system(size: 12, weight: .medium)).foregroundColor(.white.opacity(0.4)).padding(.leading, 4)
+                            Text("ABOUT")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.white.opacity(0.4))
+                                .padding(.leading, 4)
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "doc.text.fill", title: "Terms & Conditions") {}
@@ -62,20 +61,27 @@ struct SettingsView: View {
                                 Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
                                 SettingsRow(icon: "info.circle.fill", title: "Version 1.57.0") {}
                             }
-                            .glassEffect(.regular)
+                            .background(Color.white.opacity(0.03))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
                         
                         // MORE section
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("MORE").font(.system(size: 12, weight: .medium)).foregroundColor(.white.opacity(0.4)).padding(.leading, 4)
+                            Text("MORE")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.white.opacity(0.4))
+                                .padding(.leading, 4)
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "square.and.arrow.up.fill", title: "Share the app") {}
                             }
-                            .glassEffect(.regular)
+                            .background(Color.white.opacity(0.03))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
                     }
-                    .padding(.horizontal, 16).padding(.top, 8)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 100) // Space for tab bar
                 }
             }
         }
@@ -107,17 +113,21 @@ struct SettingsRow: View {
                         if let badge {
                             Text(badge)
                                 .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(.white.opacity(0.7))
+                                .foregroundColor(.white.opacity(0.6))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .glassEffect(.regular)
+                                .background(Color.white.opacity(0.08))
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
                         }
                     }
                 }
                 Spacer()
-                Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundColor(.white.opacity(0.15))
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.15))
             }
-            .padding(.horizontal, 16).padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
         }
     }
 }
