@@ -53,7 +53,6 @@ jobs:
   screenshots:
     name: Take Screenshots
     runs-on: macos-26
-    needs: []
     
     steps:
       - name: Checkout code
@@ -71,14 +70,28 @@ jobs:
       - name: List available simulators
         run: xcrun simctl list devices available | grep -i iphone
 
-      - name: Build for Simulator
+      - name: Find Simulator & Build
         run: |
+          # Find the first available iPhone simulator
+          SIM_INFO=$(xcrun simctl list devices available | grep "iPhone" | head -1)
+          echo "Found simulator: $SIM_INFO"
+          
+          SIM_NAME=$(echo "$SIM_INFO" | sed 's/(.*//' | xargs)
+          SIM_UUID=$(echo "$SIM_INFO" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
+          SIM_OS=$(echo "$SIM_INFO" | grep -oE '\([0-9]+\.[0-9]+\)' | tr -d '()')
+          
+          echo "SIM_NAME=$SIM_NAME" >> $GITHUB_ENV
+          echo "SIM_UUID=$SIM_UUID" >> $GITHUB_ENV
+          echo "SIM_OS=$SIM_OS" >> $GITHUB_ENV
+          echo "Using: $SIM_NAME (iOS $SIM_OS) UUID=$SIM_UUID"
+          
+          # Build for simulator using the found OS version
           xcodebuild build \
             -project DeAI.xcodeproj \
             -scheme DeAI \
             -sdk iphonesimulator \
             -configuration Debug \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -destination "platform=iOS Simulator,name=$SIM_NAME,OS=$SIM_OS" \
             -derivedDataPath build/DerivedData \
             COMPILER_INDEX_STORE_ENABLE=NO \
             CODE_SIGN_IDENTITY="" \
@@ -87,51 +100,34 @@ jobs:
 
       - name: Boot Simulator & Take Screenshots
         run: |
-          # Create screenshots directory
           mkdir -p screenshots
           
-          # Find the app binary path
           APP_PATH=$(find build/DerivedData -name "DeAI.app" -type d | head -1)
           echo "App path: $APP_PATH"
+          echo "Using simulator: $SIM_NAME ($SIM_UUID) iOS $SIM_OS"
           
-          # Get simulator UUID
-          SIM_UUID=$(xcrun simctl list devices available | grep "iPhone 16 Pro" | grep -v "Shutdown" | head -1 | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' || true)
-          
-          if [ -z "$SIM_UUID" ]; then
-            SIM_UUID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
-          fi
-          
-          echo "Using simulator: $SIM_UUID"
-          
-          # Erase and boot simulator
+          # Erase and boot
           xcrun simctl shutdown "$SIM_UUID" 2>/dev/null || true
           xcrun simctl erase "$SIM_UUID" 2>/dev/null || true
           xcrun simctl boot "$SIM_UUID" 2>/dev/null || true
-          
-          # Wait for simulator to boot
-          sleep 15
-          
-          # Open Simulator app window
-          open -a Simulator
-          sleep 5
+          sleep 20
           
           # Install and launch app
           xcrun simctl install "$SIM_UUID" "$APP_PATH"
           xcrun simctl launch "$SIM_UUID" com.deai.app
-          sleep 8
+          sleep 10
           
-          # Take screenshot 1 - Main screen (empty state)
+          # Screenshot 1 - Main screen
           xcrun simctl io "$SIM_UUID" screenshot screenshots/01_main_chat.png
-          echo "Screenshot 1 taken - Main chat screen"
+          echo "✅ Screenshot 1 - Main chat screen"
           
-          # Wait a moment
           sleep 3
           
-          # Take screenshot 2
-          xcrun simctl io "$SIM_UUID" screenshot screenshots/02_chat_idle.png
-          echo "Screenshot 2 taken - Chat idle"
+          # Screenshot 2 - After idle
+          xcrun simctl io "$SIM_UUID" screenshot screenshots/02_idle.png
+          echo "✅ Screenshot 2 - Idle state"
           
-          # Shutdown simulator
+          # Shutdown
           xcrun simctl shutdown "$SIM_UUID" 2>/dev/null || true
 
       - name: Upload Screenshots
