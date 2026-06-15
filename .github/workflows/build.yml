@@ -53,6 +53,7 @@ jobs:
   screenshots:
     name: Take Screenshots
     runs-on: macos-26
+    continue-on-error: true
     
     steps:
       - name: Checkout code
