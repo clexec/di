@@ -1,7 +1,8 @@
 import Foundation
 
 // MARK: - AI Service
-class AIService {
+@Sendable
+final class AIService: Sendable {
     static let shared = AIService()
     
     private let session: URLSession
