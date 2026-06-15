@@ -9,6 +9,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: minimal
     DEVELOPMENT_TEAM: ""
 
 targets:
@@ -43,6 +44,7 @@ targets:
         SWIFT_EMIT_LOC_STRINGS: YES
         INFOPLIST_KEY_CFBundleDisplayName: "DeAI"
         INFOPLIST_KEY_CFBundleShortVersionString: "1.0.0"
+        SWIFT_STRICT_CONCURRENCY: minimal
     info:
       path: Info.plist
       properties:

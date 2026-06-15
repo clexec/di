@@ -9,62 +9,57 @@ struct ChatView: View {
     @State private var showSettings: Bool = false
     @State private var showConversations: Bool = false
     @State private var showProviderPicker: Bool = false
-    @Namespace private var glassNS
+    // Liquid Glass variables
+    @Namespace private var glassNamespace
+    @State private var isMerged: Bool = false
+    @State private var isInputExpanded: Bool = false
     
     var body: some View {
         ZStack {
-            // Background
-            LinearGradient(
-                colors: [Color(hex: "#4C1D95"), Color(hex: "#1F1F2E"), Color.black],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            LinearGradient(colors: [Color(hex: "#4C1D95"), Color(hex: "#1F1F2E"), Color.black], startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 topNavBar
-                
-                if messages.isEmpty {
-                    emptyStateView
-                } else {
-                    messagesListView
-                }
-                
+                if messages.isEmpty { emptyStateView } else { messagesListView }
                 bottomInputArea
             }
             
-            if showAttachMenu {
-                attachMenuOverlay
-            }
+            if showAttachMenu { attachMenuOverlay }
         }
         .sheet(isPresented: $showSettings) { SettingsView() }
         .sheet(isPresented: $showConversations) { ConversationsListView() }
         .sheet(isPresented: $showProviderPicker) { ProviderPickerView() }
     }
     
-    // MARK: - Top Nav Bar
+    // MARK: - Top Nav Bar — Liquid Glass container with morphing IDs
     private var topNavBar: some View {
         GlassEffectContainer(spacing: 40) {
             HStack(spacing: 10) {
+                // Settings + Chat buttons — glass capsule that merges
                 HStack(spacing: 8) {
                     Button(action: { showSettings = true }) {
                         Image(systemName: "gearshape.fill")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.white)
                     }
-                    .glassEffectID("navButtons", in: glassNS)
+                    .glassEffectID("navLeft", in: glassNamespace)
                     
                     Button(action: { showConversations = true }) {
                         Image(systemName: "bubble.left.fill")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.white)
                     }
+                    .glassEffectID("navRight", in: glassNamespace)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .glassEffect(.regular.interactive())
+                .glassEffect(.regular.interactive().tint(.purple))
+                .glassEffectUnion(id: "navLeft", in: glassNamespace)
+                .glassEffectUnion(id: "navRight", in: glassNamespace)
                 
-                Button(action: { showProviderPicker = true }) {
+                // Model selector button
+                Button(action: { withAnimation { showProviderPicker = true } }) {
                     HStack(spacing: 4) {
                         Text(appState.selectedModel)
                             .font(.system(size: 15, weight: .semibold))
@@ -74,10 +69,12 @@ struct ChatView: View {
                             .foregroundColor(.white.opacity(0.4))
                     }
                 }
+                .glassEffect(.clear.interactive())
                 
                 Spacer()
                 
-                Button(action: { messages = [] }) {
+                // New chat — glass with purple tint
+                Button(action: { withAnimation { messages = [] } }) {
                     Image(systemName: "square.and.pencil")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.white)
@@ -108,6 +105,7 @@ struct ChatView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
                 
+                // Try it button — regular glass + purple tint + interactive
                 Button(action: {}) {
                     Text("Try it")
                         .font(.system(size: 16, weight: .medium))
@@ -122,28 +120,18 @@ struct ChatView: View {
             
             Spacer()
             
-            quickPromptsRow
-        }
-    }
-    
-    // MARK: - Quick Prompts
-    private var quickPromptsRow: some View {
-        GlassEffectContainer(spacing: 20) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    QuickPromptChip(title: "Design", subtitle: "a workout routine") {
-                        messageText = "Design a workout routine"
+            // Quick prompts — GlassEffectContainer for merge animation
+            GlassEffectContainer(spacing: 20) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        QuickPromptChip(title: "Design", subtitle: "a workout routine") { messageText = "Design a workout routine" }
+                        QuickPromptChip(title: "Explain", subtitle: "a complex topic simply") { messageText = "Explain a complex topic simply" }
+                        QuickPromptChip(title: "Master", subtitle: "smartphone photography") { messageText = "Master smartphone photography" }
                     }
-                    QuickPromptChip(title: "Explain", subtitle: "a complex topic simply") {
-                        messageText = "Explain a complex topic simply"
-                    }
-                    QuickPromptChip(title: "Master", subtitle: "smartphone photography") {
-                        messageText = "Master smartphone photography"
-                    }
+                    .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
             }
-            .padding(.bottom, 12)
         }
     }
     
@@ -152,15 +140,11 @@ struct ChatView: View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 ForEach(messages) { message in
-                    ChatBubble(message: message)
+                    ChatBubble(message: message, namespace: glassNamespace)
                 }
-                
                 if isLoading {
-                    HStack {
-                        TypingIndicator()
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
+                    HStack { TypingIndicator(); Spacer() }
+                        .padding(.horizontal, 16)
                 }
             }
             .padding(.horizontal, 16)
@@ -168,25 +152,30 @@ struct ChatView: View {
         }
     }
     
-    // MARK: - Bottom Input
+    // MARK: - Bottom Input — Liquid Glass container for merge
     private var bottomInputArea: some View {
         GlassEffectContainer(spacing: 0) {
             HStack(spacing: 12) {
+                // Plus button — interactive glass with red tint
                 Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                         .padding(10)
                 }
-                .glassEffect(.regular.interactive())
+                .glassEffect(.regular.interactive().tint(.red))
+                .glassEffectID("attachBtn", in: glassNamespace)
                 
+                // Text field — regular glass
                 TextField("Ask anything", text: $messageText)
                     .foregroundColor(.white)
                     .font(.system(size: 16))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 11)
                     .glassEffect(.regular)
+                    .glassEffectID("inputField", in: glassNamespace)
                 
+                // Send button — interactive glass with blue tint
                 Button(action: sendMessage) {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 16, weight: .bold))
@@ -194,7 +183,10 @@ struct ChatView: View {
                         .padding(10)
                 }
                 .glassEffect(.regular.interactive().tint(.blue))
-                .disabled(messageText.isEmpty)
+                .glassEffectID("sendBtn", in: glassNamespace)
+                // Merge attach + input + send into one glass when typing
+                .glassEffectUnion(id: "attachBtn", in: glassNamespace)
+                .glassEffectUnion(id: "inputField", in: glassNamespace)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
@@ -202,18 +194,17 @@ struct ChatView: View {
         }
     }
     
-    // MARK: - Attach Menu
+    // MARK: - Attach Menu — glass container
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
-            Color.clear
-                .contentShape(Rectangle())
+            Color.clear.contentShape(Rectangle())
                 .onTapGesture { withAnimation(.spring()) { showAttachMenu = false } }
             
             GlassEffectContainer(spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
-                    AttachMenuItem(icon: "folder.fill", title: "Attach file", subtitle: nil) { showAttachMenu = false }
-                    AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { showAttachMenu = false }
-                    AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { showAttachMenu = false }
+                    AttachMenuItem(icon: "folder.fill", title: "Attach file", subtitle: nil) { withAnimation { showAttachMenu = false } }
+                    AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
+                    AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
                 }
                 .glassEffect(.regular)
             }
@@ -235,20 +226,19 @@ struct ChatView: View {
         Task {
             do {
                 let response = try await AIService.shared.sendMessage(
-                    provider: appState.selectedProvider,
-                    message: prompt,
+                    provider: appState.selectedProvider, message: prompt,
                     apiKey: appState.apiKeys[appState.selectedProvider],
                     model: appState.selectedProvider.defaultModel,
                     systemPrompt: appState.personalizationEnabled ? appState.customInstructions : nil,
                     ollamaURL: appState.ollamaURL
                 )
                 await MainActor.run {
-                    messages.append(ChatMessage(content: response, isUser: false, timestamp: Date()))
+                    withAnimation { messages.append(ChatMessage(content: response, isUser: false, timestamp: Date())) }
                     isLoading = false
                 }
             } catch {
                 await MainActor.run {
-                    messages.append(ChatMessage(content: "Error: \(error.localizedDescription)", isUser: false, timestamp: Date()))
+                    withAnimation { messages.append(ChatMessage(content: "Error: \(error.localizedDescription)", isUser: false, timestamp: Date())) }
                     isLoading = false
                 }
             }
@@ -256,45 +246,35 @@ struct ChatView: View {
     }
 }
 
-// MARK: - Quick Prompt Chip
+// MARK: - Quick Prompt Chip — glass with purple tint + interactive
 struct QuickPromptChip: View {
-    let title: String
-    let subtitle: String
-    let action: () -> Void
-    
+    let title: String; let subtitle: String; let action: () -> Void
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white)
-                Text(subtitle)
-                    .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "#9CA3AF"))
+                Text(title).font(.system(size: 14, weight: .bold)).foregroundColor(.white)
+                Text(subtitle).font(.system(size: 13)).foregroundColor(Color(hex: "#9CA3AF"))
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.horizontal, 16).padding(.vertical, 14)
         }
         .glassEffect(.regular.interactive().tint(.purple))
     }
 }
 
-// MARK: - Chat Bubble
+// MARK: - Chat Bubble — glass effect with tint per role
 struct ChatBubble: View {
     let message: ChatMessage
-    
+    var namespace: Namespace.ID
     var body: some View {
         HStack {
             if message.isUser { Spacer() }
-            
             Text(message.content)
                 .font(.system(size: 16))
                 .foregroundColor(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .glassEffect(message.isUser ? .regular.tint(.purple) : .clear)
+                .padding(.horizontal, 14).padding(.vertical, 10)
+                .glassEffect(message.isUser ? .regular.interactive().tint(.purple) : .clear.interactive().tint(.blue))
+                .glassEffectID(message.id.uuidString, in: namespace)
                 .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
-            
             if !message.isUser { Spacer() }
         }
     }
@@ -302,57 +282,34 @@ struct ChatBubble: View {
 
 // MARK: - Attach Menu Item
 struct AttachMenuItem: View {
-    let icon: String
-    let title: String
-    let subtitle: String?
-    let action: () -> Void
-    
+    let icon: String; let title: String; let subtitle: String?; let action: () -> Void
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                Image(systemName: icon)
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white)
-                    .frame(width: 28)
+                Image(systemName: icon).font(.system(size: 18, weight: .medium)).foregroundColor(.white).frame(width: 28)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                    if let subtitle {
-                        Text(subtitle)
-                            .font(.system(size: 12))
-                            .foregroundColor(.white.opacity(0.35))
-                    }
+                    Text(title).font(.system(size: 16, weight: .medium)).foregroundColor(.white)
+                    if let subtitle { Text(subtitle).font(.system(size: 12)).foregroundColor(.white.opacity(0.35)) }
                 }
                 Spacer()
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.horizontal, 16).padding(.vertical, 14)
         }
     }
 }
 
-// MARK: - Typing Indicator
+// MARK: - Typing Indicator — clear glass
 struct TypingIndicator: View {
     @State private var animating = false
-    
     var body: some View {
         HStack(spacing: 6) {
             ForEach(0..<3, id: \.self) { i in
-                Circle()
-                    .fill(Color.white.opacity(0.4))
-                    .frame(width: 8, height: 8)
+                Circle().fill(Color.white.opacity(0.4)).frame(width: 8, height: 8)
                     .offset(y: animating ? -4 : 4)
-                    .animation(
-                        .easeInOut(duration: 0.5)
-                            .repeatForever(autoreverses: true)
-                            .delay(Double(i) * 0.15),
-                        value: animating
-                    )
+                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true).delay(Double(i)*0.15), value: animating)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 16).padding(.vertical, 12)
         .glassEffect(.clear)
         .onAppear { animating = true }
     }
