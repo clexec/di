@@ -18,7 +18,6 @@ struct ConversationsListView: View {
                         Image(systemName: "xmark").font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(10)
                     }
                     .glassEffect(.regular.interactive())
-                    .glassEffectID(id: "closeConv", namespace: convNamespace)
                     
                     Spacer()
                     
@@ -57,7 +56,6 @@ struct ConversationsListView: View {
                                 }
                                 .listRowBackground(Color.clear)
                                 .glassEffect(.clear.interactive())
-                                .glassEffectID(id: conversation.id.uuidString, namespace: convNamespace)
                             }
                         }
                         .listStyle(.plain).scrollContentBackground(.hidden)
