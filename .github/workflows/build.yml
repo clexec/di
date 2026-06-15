@@ -67,16 +67,23 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: List available simulators
-        run: xcrun simctl list devices available | grep -i iphone
+      - name: List runtimes & simulators
+        run: |
+          xcrun simctl list runtimes
+          echo "---"
+          xcrun simctl list devices available | grep -i iphone
 
       - name: Find Simulator & Build
         run: |
-          # Find the first available iPhone simulator
+          # Find an iPhone simulator that has a booted runtime
+          # Try to get runtime info from simctl list
+          RUNTIME_ID=$(xcrun simctl list runtimes | grep -i "ios" | head -1 | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' || true)
+          echo "Runtime ID: $RUNTIME_ID"
+          
+          # Find first iPhone device
           SIM_INFO=$(xcrun simctl list devices available | grep "iPhone" | head -1)
           echo "Found simulator: $SIM_INFO"
           
-          # Extract name: everything before the first (UUID)
           SIM_NAME=$(echo "$SIM_INFO" | sed 's/(.*//' | xargs)
           SIM_UUID=$(echo "$SIM_INFO" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
           
@@ -84,13 +91,13 @@ jobs:
           echo "SIM_UUID=$SIM_UUID" >> $GITHUB_ENV
           echo "Using: $SIM_NAME UUID=$SIM_UUID"
           
-          # Build for simulator - use name only (auto-detects OS)
+          # Build for simulator using generic destination
           xcodebuild build \
             -project DeAI.xcodeproj \
             -scheme DeAI \
             -sdk iphonesimulator \
             -configuration Debug \
-            -destination "platform=iOS Simulator,name=$SIM_NAME" \
+            -destination "generic/platform=iOS Simulator" \
             -derivedDataPath build/DerivedData \
             COMPILER_INDEX_STORE_ENABLE=NO \
             CODE_SIGN_IDENTITY="" \
@@ -118,13 +125,13 @@ jobs:
           
           # Screenshot 1 - Main screen
           xcrun simctl io "$SIM_UUID" screenshot screenshots/01_main_chat.png
-          echo "✅ Screenshot 1 - Main chat screen"
+          echo "Screenshot 1 - Main chat screen"
           
           sleep 3
           
           # Screenshot 2 - After idle
           xcrun simctl io "$SIM_UUID" screenshot screenshots/02_idle.png
-          echo "✅ Screenshot 2 - Idle state"
+          echo "Screenshot 2 - Idle state"
           
           # Shutdown
           xcrun simctl shutdown "$SIM_UUID" 2>/dev/null || true
