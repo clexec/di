@@ -9,7 +9,7 @@ struct ConversationsListView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — title left, close RIGHT
+                // Header — title left, close RIGHT, bigger with glass
                 HStack {
                     Text("Chats")
                         .font(.system(size: 22, weight: .bold))
@@ -19,8 +19,9 @@ struct ConversationsListView: View {
                     
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24, weight: .medium))
+                            .font(.system(size: 30, weight: .medium))
                             .foregroundColor(.white.opacity(0.6))
+                            .frame(width: 44, height: 44)
                     }
                     .glassEffect(.regular.interactive())
                 }

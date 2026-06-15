@@ -9,7 +9,7 @@ struct ProviderPickerView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — title left, close RIGHT
+                // Header — title left, close RIGHT, bigger with glass
                 HStack {
                     Text("Select Provider")
                         .font(.system(size: 22, weight: .bold))
@@ -19,15 +19,16 @@ struct ProviderPickerView: View {
                     
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24, weight: .medium))
+                            .font(.system(size: 30, weight: .medium))
                             .foregroundColor(.white.opacity(0.6))
+                            .frame(width: 44, height: 44)
                     }
                     .glassEffect(.regular.interactive())
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
                 
-                // Provider list — NO ovals
+                // Provider list — NO ovals, glassEffect rows
                 ScrollView {
                     VStack(spacing: 6) {
                         ForEach(AIProvider.allCases) { provider in
@@ -56,6 +57,10 @@ struct ProviderRow: View {
             HStack(spacing: 14) {
                 ProviderIconView(provider: provider, size: 24)
                     .frame(width: 36, height: 36)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    )
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(provider.rawValue)
@@ -75,7 +80,7 @@ struct ProviderRow: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
-        .background(isSelected ? Color.white.opacity(0.06) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .glassEffect(isSelected ? .regular.interactive() : .clear.interactive())
     }
 }

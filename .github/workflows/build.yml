@@ -73,31 +73,33 @@ jobs:
           echo "---"
           xcrun simctl list devices available | grep -i iphone
 
+      - name: Install iOS Simulator Runtime
+        run: |
+          # Check if iOS runtime is available, if not try to install it
+          RUNTIME_AVAILABLE=$(xcrun simctl list runtimes | grep -c "iOS" || true)
+          if [ "$RUNTIME_AVAILABLE" -eq 0 ]; then
+            echo "No iOS runtime found, attempting to install..."
+            xcodebuild -downloadPlatform iOS
+          fi
+
       - name: Find Simulator & Build
         run: |
-          # Find an iPhone simulator that has a booted runtime
-          # Try to get runtime info from simctl list
-          RUNTIME_ID=$(xcrun simctl list runtimes | grep -i "ios" | head -1 | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' || true)
-          echo "Runtime ID: $RUNTIME_ID"
-          
           # Find first iPhone device
           SIM_INFO=$(xcrun simctl list devices available | grep "iPhone" | head -1)
           echo "Found simulator: $SIM_INFO"
           
-          SIM_NAME=$(echo "$SIM_INFO" | sed 's/(.*//' | xargs)
           SIM_UUID=$(echo "$SIM_INFO" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
           
-          echo "SIM_NAME=$SIM_NAME" >> $GITHUB_ENV
           echo "SIM_UUID=$SIM_UUID" >> $GITHUB_ENV
-          echo "Using: $SIM_NAME UUID=$SIM_UUID"
+          echo "Using UUID=$SIM_UUID"
           
-          # Build for simulator using generic destination
+          # Build for simulator — use specific destination if possible
           xcodebuild build \
             -project DeAI.xcodeproj \
             -scheme DeAI \
             -sdk iphonesimulator \
             -configuration Debug \
-            -destination "generic/platform=iOS Simulator" \
+            -destination "platform=iOS Simulator,id=$SIM_UUID" \
             -derivedDataPath build/DerivedData \
             COMPILER_INDEX_STORE_ENABLE=NO \
             CODE_SIGN_IDENTITY="" \
@@ -110,7 +112,7 @@ jobs:
           
           APP_PATH=$(find build/DerivedData -name "DeAI.app" -type d | head -1)
           echo "App path: $APP_PATH"
-          echo "Using simulator: $SIM_NAME ($SIM_UUID)"
+          echo "Using simulator UUID=$SIM_UUID"
           
           # Erase and boot
           xcrun simctl shutdown "$SIM_UUID" 2>/dev/null || true

@@ -10,7 +10,7 @@ struct SettingsView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — title left, close button RIGHT side, bigger
+                // Header — title left, close button RIGHT side, bigger with glass
                 HStack {
                     Text("Settings")
                         .font(.system(size: 22, weight: .bold))
@@ -18,11 +18,12 @@ struct SettingsView: View {
                     
                     Spacer()
                     
-                    // Close button — RIGHT side, bigger
+                    // Close button — RIGHT side, bigger, with glassEffect
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24, weight: .medium))
+                            .font(.system(size: 30, weight: .medium))
                             .foregroundColor(.white.opacity(0.6))
+                            .frame(width: 44, height: 44)
                     }
                     .glassEffect(.regular.interactive())
                 }
@@ -100,7 +101,7 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Settings Row
+// MARK: - Settings Row — with icon border
 struct SettingsRow: View {
     let icon: String
     let title: String
@@ -112,10 +113,15 @@ struct SettingsRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
+                // Icon with border/outline
                 Image(systemName: icon)
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(isDestructive ? .red.opacity(0.7) : .white.opacity(0.7))
                     .frame(width: 30, height: 30)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 7)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    )
                 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
@@ -144,7 +150,7 @@ struct SettingsRow: View {
     }
 }
 
-// MARK: - Settings Toggle Row (for on/off switches)
+// MARK: - Settings Toggle Row — green tint
 struct SettingsToggleRow: View {
     let icon: String
     let title: String
@@ -152,10 +158,15 @@ struct SettingsToggleRow: View {
     
     var body: some View {
         HStack(spacing: 14) {
+            // Icon with border/outline
             Image(systemName: icon)
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundColor(.white.opacity(0.7))
                 .frame(width: 30, height: 30)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 7)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                )
             
             Text(title)
                 .font(.system(size: 17, weight: .semibold))
@@ -165,7 +176,7 @@ struct SettingsToggleRow: View {
             
             Toggle("", isOn: $isOn)
                 .labelsHidden()
-                .tint(.white.opacity(0.5))
+                .tint(.green)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)

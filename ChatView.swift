@@ -40,22 +40,22 @@ struct ChatView: View {
     // MARK: - Top Nav Bar
     private var topNavBar: some View {
         HStack(spacing: 8) {
-            // Settings + Chats — side by side, compact
+            // Settings + Chats — side by side, compact, bigger icons
             HStack(spacing: 4) {
-                // Settings button
+                // Settings button — bigger icon
                 Button(action: { showSettings = true }) {
                     Image(systemName: "gearshape.fill")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.white)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 40, height: 40)
                 }
                 
-                // Chats button
+                // Chats button — bigger icon
                 Button(action: { showConversations = true }) {
                     Image(systemName: "bubble.left.fill")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.white)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 40, height: 40)
                 }
             }
             .padding(.horizontal, 6)
@@ -78,12 +78,12 @@ struct ChatView: View {
             
             Spacer()
             
-            // New chat button
+            // New chat button — bigger icon
             Button(action: { withAnimation { messages = [] } }) {
                 Image(systemName: "square.and.pencil")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.white)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 40, height: 40)
             }
             .glassEffect(.regular.interactive())
         }
@@ -92,7 +92,7 @@ struct ChatView: View {
         .padding(.bottom, 12)
     }
     
-    // MARK: - Model Picker Popup (compact, no ovals)
+    // MARK: - Model Picker Popup — with Liquid Glass
     private var modelPickerOverlay: some View {
         ZStack {
             // Dim background
@@ -100,7 +100,7 @@ struct ChatView: View {
                 .ignoresSafeArea()
                 .onTapGesture { withAnimation(.spring(response: 0.3)) { showModelPicker = false } }
             
-            // Popup card — compact
+            // Popup card — Liquid Glass style
             VStack(spacing: 0) {
                 Text("Select model")
                     .font(.system(size: 14, weight: .semibold))
@@ -181,7 +181,7 @@ struct ChatView: View {
                 .padding(.bottom, 12)
             }
             .frame(width: 260)
-            .background(Color(red: 0.15, green: 0.15, blue: 0.18))
+            .glassEffect(.regular)
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .transition(.opacity.combined(with: .scale(scale: 0.95)))
         }
@@ -288,7 +288,7 @@ struct ChatView: View {
         .padding(.bottom, 8)
     }
     
-    // MARK: - Attach Menu — rounded rectangle, NO ovals
+    // MARK: - Attach Menu — Liquid Glass + rounded rectangle, NO ovals
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear.contentShape(Rectangle())
@@ -301,8 +301,8 @@ struct ChatView: View {
                 Divider().background(Color.white.opacity(0.06))
                 AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
             }
-            .background(Color(red: 0.15, green: 0.15, blue: 0.18))
             .clipShape(RoundedRectangle(cornerRadius: 14))
+            .glassEffect(.regular)
             .padding(.leading, 14)
             .padding(.bottom, 80)
             .frame(width: 260)
@@ -365,7 +365,7 @@ struct QuickPromptChip: View {
     }
 }
 
-// MARK: - Chat Bubble
+// MARK: - Chat Bubble — with context menu for AI messages
 struct ChatBubble: View {
     let message: ChatMessage
     
@@ -385,6 +385,27 @@ struct ChatBubble: View {
             .padding(.horizontal, 14).padding(.vertical, 10)
             .glassEffect(message.isUser ? .regular.interactive() : .clear.interactive())
             .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
+            // Context menu on AI messages: Copy + Repeat
+            .contextMenu {
+                if !message.isUser {
+                    Button(action: {
+                        UIPasteboard.general.string = message.content
+                    }) {
+                        Label("Copy", systemImage: "doc.on.doc")
+                    }
+                    Button(action: {
+                        // Repeat — will be handled by parent
+                    }) {
+                        Label("Repeat request", systemImage: "arrow.clockwise")
+                    }
+                } else {
+                    Button(action: {
+                        UIPasteboard.general.string = message.content
+                    }) {
+                        Label("Copy", systemImage: "doc.on.doc")
+                    }
+                }
+            }
             if !message.isUser { Spacer() }
         }
     }

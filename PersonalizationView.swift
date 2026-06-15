@@ -13,7 +13,7 @@ struct PersonalizationView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — title left, close RIGHT, save RIGHT of close
+                // Header — title left, save + close RIGHT, bigger close button with glass
                 HStack {
                     Text("Personalization")
                         .font(.system(size: 22, weight: .bold))
@@ -24,16 +24,18 @@ struct PersonalizationView: View {
                     // Save button
                     Button(action: { withAnimation { appState.customInstructions = instructions; dismiss() } }) {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 24, weight: .medium))
+                            .font(.system(size: 28, weight: .medium))
                             .foregroundColor(.white.opacity(0.7))
+                            .frame(width: 44, height: 44)
                     }
                     .glassEffect(.regular.interactive())
                     
-                    // Close button — RIGHT
+                    // Close button — RIGHT, bigger, with glassEffect
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24, weight: .medium))
+                            .font(.system(size: 28, weight: .medium))
                             .foregroundColor(.white.opacity(0.6))
+                            .frame(width: 44, height: 44)
                     }
                     .glassEffect(.regular.interactive())
                 }
@@ -43,7 +45,7 @@ struct PersonalizationView: View {
                 // Content
                 ScrollView {
                     VStack(spacing: 16) {
-                        // Toggle
+                        // Toggle — green tint, NO oval, use glassEffect
                         HStack {
                             Image(systemName: "slider.horizontal.3")
                                 .font(.system(size: 17, weight: .semibold))
@@ -52,10 +54,13 @@ struct PersonalizationView: View {
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundColor(.white)
                             Spacer()
-                            Toggle("", isOn: $appState.personalizationEnabled).labelsHidden()
+                            Toggle("", isOn: $appState.personalizationEnabled)
+                                .labelsHidden()
+                                .tint(.green)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 14)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                         .glassEffect(.regular.interactive())
                         
                         // Custom instructions
@@ -96,10 +101,11 @@ struct PersonalizationView: View {
                                     .padding(8)
                             }
                             .padding(12)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                             .glassEffect(.regular)
                         }
                         
-                        // Temperature
+                        // Temperature — NO oval, use glassEffect
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Image(systemName: "thermometer.medium")
@@ -129,6 +135,7 @@ struct PersonalizationView: View {
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 14)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                             .glassEffect(.regular.interactive())
                             
                             Text("Controls randomness in responses. Lower values make the AI more focused and deterministic, while higher values make it more creative and unpredictable.")

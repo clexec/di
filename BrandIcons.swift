@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Brand SVG Icons from thesvg.org
+// MARK: - Brand SVG Icons
 // Real brand logos as SwiftUI Shapes
 
 struct OpenAILogo: Shape {
@@ -90,43 +90,50 @@ struct OpenAILogo: Shape {
 }
 
 // MARK: - Provider Icon View
-// Updated SF Symbols for all providers
+// Updated icons with borders/outlines
 
 struct ProviderIconView: View {
     let provider: AIProvider
     var size: CGFloat = 20
     
     var body: some View {
-        switch provider {
-        case .openai:
-            OpenAILogo()
-                .fill(.white.opacity(0.85))
-                .frame(width: size, height: size)
-        case .deepseek:
-            Image(systemName: "waveform.path.ecg")
-                .font(.system(size: size * 0.8, weight: .medium))
-                .foregroundColor(.white.opacity(0.85))
-        case .gemini:
-            Image(systemName: "star.circle")
-                .font(.system(size: size * 0.8, weight: .medium))
-                .foregroundColor(.white.opacity(0.85))
-        case .openrouter:
-            Image(systemName: "network")
-                .font(.system(size: size * 0.8, weight: .medium))
-                .foregroundColor(.white.opacity(0.85))
-        case .ollama:
-            Image(systemName: "server.rack")
-                .font(.system(size: size * 0.8, weight: .medium))
-                .foregroundColor(.white.opacity(0.85))
-        case .custom:
-            Image(systemName: "terminal")
-                .font(.system(size: size * 0.8, weight: .medium))
-                .foregroundColor(.white.opacity(0.85))
+        Group {
+            switch provider {
+            case .openai:
+                OpenAILogo()
+                    .fill(.white.opacity(0.85))
+                    .frame(width: size, height: size)
+            case .deepseek:
+                Image(systemName: "waveform.path.ecg")
+                    .font(.system(size: size * 0.8, weight: .medium))
+                    .foregroundColor(.white.opacity(0.85))
+            case .gemini:
+                Image(systemName: "sparkles")
+                    .font(.system(size: size * 0.8, weight: .medium))
+                    .foregroundColor(.white.opacity(0.85))
+            case .openrouter:
+                Image(systemName: "arrow.triangle.branch")
+                    .font(.system(size: size * 0.8, weight: .medium))
+                    .foregroundColor(.white.opacity(0.85))
+            case .ollama:
+                Image(systemName: "desktopcomputer")
+                    .font(.system(size: size * 0.8, weight: .medium))
+                    .foregroundColor(.white.opacity(0.85))
+            case .custom:
+                Image(systemName: "terminal")
+                    .font(.system(size: size * 0.8, weight: .medium))
+                    .foregroundColor(.white.opacity(0.85))
+            }
         }
+        .frame(width: size, height: size)
+        .overlay(
+            RoundedRectangle(cornerRadius: size * 0.3)
+                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+        )
     }
 }
 
-// MARK: - Settings Icon View
+// MARK: - Settings Icon View — with border
 
 struct SettingsIconView: View {
     let iconName: String
@@ -137,5 +144,9 @@ struct SettingsIconView: View {
             .font(.system(size: size, weight: .medium))
             .foregroundColor(.white.opacity(0.7))
             .frame(width: 30, height: 30)
+            .overlay(
+                RoundedRectangle(cornerRadius: 7)
+                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
+            )
     }
 }

@@ -1,9 +1,9 @@
 import SwiftUI
 import Combine
 
-// MARK: - App Background Color — brighter gray
+// MARK: - App Background Color — darker gray
 extension Color {
-    static let appBackground = Color(red: 0.16, green: 0.16, blue: 0.19)
+    static let appBackground = Color(red: 0.10, green: 0.10, blue: 0.13)
 }
 
 enum AIProvider: String, CaseIterable, Identifiable {
