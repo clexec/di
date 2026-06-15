@@ -15,7 +15,7 @@ settings:
 targets:
   DeAI:
     type: application
-    platform: [iOS]
+    platform: iOS
     sources:
       - path: .
         excludes:
@@ -47,10 +47,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: "DeAI"
         INFOPLIST_KEY_CFBundleShortVersionString: "1.0.0"
         SWIFT_STRICT_CONCURRENCY: minimal
-        SUPPORTS_XCODE_DESIGNED_FOR_IPHONE_IPAD: YES
-        SUPPORT_MACCATALYST: NO
         SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
-        VALID_ARCHS: "arm64 x86_64"
     info:
       path: Info.plist
       properties:
