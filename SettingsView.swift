@@ -7,10 +7,12 @@ struct SettingsView: View {
     
     var body: some View {
         ZStack {
-            Color.appBackground.ignoresSafeArea()
+            // Deep background
+            Color(red: 0.05, green: 0.05, blue: 0.08)
+                .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — title left, close button RIGHT, bigger
+                // Header
                 HStack {
                     Text("Settings")
                         .font(.system(size: 24, weight: .bold))
@@ -18,81 +20,93 @@ struct SettingsView: View {
                     
                     Spacer()
                     
-                    // Close button — RIGHT, bigger, with glassEffect
+                    // Close button
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 30, weight: .medium))
-                            .foregroundColor(.white.opacity(0.6))
-                            .frame(width: 44, height: 44)
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundColor(Color.white.opacity(0.5))
+                            .frame(width: 40, height: 40)
+                            .background(
+                                Circle()
+                                    .fill(Color.white.opacity(0.08))
+                            )
                     }
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 18)
                 .padding(.bottom, 16)
                 
-                // Sections — more spacing
+                // Sections
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: 22) {
                         // APP section
                         VStack(alignment: .leading, spacing: 8) {
                             Text("APP")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.white.opacity(0.45))
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.4))
                                 .padding(.leading, 6)
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "cube.box.fill", title: "Manage models") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
                                 SettingsRow(icon: "link.circle.fill", title: "LM Link", badge: "New", badgeColor: .green) {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
                                 SettingsRow(icon: "person.crop.circle.fill", title: "Personalization") { withAnimation { showPersonalization = true } }
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
                                 SettingsToggleRow(icon: "keyboard.fill", title: "Show keyboard on launch", isOn: $appState.showKeyboardOnLaunch)
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
                                 SettingsRow(icon: "trash.fill", title: "Delete conversation history", isDestructive: true) {}
                             }
-                            .glassEffect(.regular, in: .rect(cornerRadius: 16))
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.white.opacity(0.05))
+                            )
                         }
                         
                         // ABOUT section
                         VStack(alignment: .leading, spacing: 8) {
                             Text("ABOUT")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.white.opacity(0.45))
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.4))
                                 .padding(.leading, 6)
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "doc.text.fill", title: "Terms & Conditions") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
                                 SettingsRow(icon: "lock.shield.fill", title: "Privacy Policy") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
                                 SettingsRow(icon: "doc.richtext.fill", title: "Licenses") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
                                 SettingsRow(icon: "info.circle.fill", title: "Version 1.57.0") {}
                             }
-                            .glassEffect(.regular, in: .rect(cornerRadius: 16))
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.white.opacity(0.05))
+                            )
                         }
                         
                         // MORE section
                         VStack(alignment: .leading, spacing: 8) {
                             Text("MORE")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.white.opacity(0.45))
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.4))
                                 .padding(.leading, 6)
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "square.and.arrow.up.fill", title: "Share the app") {}
-                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
-                                SettingsRow(icon: "chevron.left.forwardslash.chevron.right", title: "Follow us on X") {}
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 58)
+                                SettingsRow(icon: "at.circle.fill", title: "Follow us on X") {}
                             }
-                            .glassEffect(.regular, in: .rect(cornerRadius: 16))
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.white.opacity(0.05))
+                            )
                         }
                         
                         // Footer
                         Text("Made with ❤️ in 🇫🇷")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.3))
+                            .foregroundColor(.white.opacity(0.25))
                             .padding(.top, 20)
                     }
                     .padding(.horizontal, 20)
@@ -106,76 +120,77 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Settings Row with glassEffect
+// MARK: - Settings Row
 struct SettingsRow: View {
     let icon: String
     let title: String
     var isDestructive: Bool = false
     var badge: String? = nil
-    var badgeColor: Color = .white.opacity(0.6)
+    var badgeColor: Color = .green
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 16) {
-                // Icon with border/outline
+            HStack(spacing: 14) {
+                // Icon
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(isDestructive ? .red.opacity(0.8) : .white.opacity(0.8))
-                    .frame(width: 34, height: 34)
-                    .overlay(
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(isDestructive ? .red.opacity(0.8) : .white.opacity(0.7))
+                    .frame(width: 32, height: 32)
+                    .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                            .fill(isDestructive ? Color.red.opacity(0.1) : Color.white.opacity(0.06))
                     )
                 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 8) {
                         Text(title)
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.system(size: 16, weight: .medium))
                             .foregroundColor(isDestructive ? .red : .white)
                         if let badge {
                             Text(badge)
-                                .font(.system(size: 12, weight: .bold))
+                                .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(badgeColor)
-                                .padding(.horizontal, 7)
+                                .padding(.horizontal, 6)
                                 .padding(.vertical, 3)
-                                .background(badgeColor.opacity(0.15))
-                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .background(
+                                    Capsule()
+                                        .fill(badgeColor.opacity(0.15))
+                                )
                         }
                     }
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.white.opacity(0.15))
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
         }
-        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
     }
 }
 
-// MARK: - Settings Toggle Row with glassEffect
+// MARK: - Settings Toggle Row
 struct SettingsToggleRow: View {
     let icon: String
     let title: String
     @Binding var isOn: Bool
     
     var body: some View {
-        HStack(spacing: 16) {
-            // Icon with border/outline
+        HStack(spacing: 14) {
+            // Icon
             Image(systemName: icon)
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.white.opacity(0.8))
-                .frame(width: 34, height: 34)
-                .overlay(
+                .font(.system(size: 17, weight: .medium))
+                .foregroundColor(.white.opacity(0.7))
+                .frame(width: 32, height: 32)
+                .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        .fill(Color.white.opacity(0.06))
                 )
             
             Text(title)
-                .font(.system(size: 17, weight: .semibold))
+                .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.white)
             
             Spacer()
@@ -184,8 +199,7 @@ struct SettingsToggleRow: View {
                 .labelsHidden()
                 .tint(.green)
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 16)
-        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
     }
 }

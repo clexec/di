@@ -1,8 +1,6 @@
 import SwiftUI
 
 // MARK: - Provider Icon View
-// All providers use real SF Symbols with borders
-
 struct ProviderIconView: View {
     let provider: AIProvider
     var size: CGFloat = 20
@@ -12,40 +10,39 @@ struct ProviderIconView: View {
             switch provider {
             case .openai:
                 Image(systemName: "brain.head.profile")
-                    .font(.system(size: size * 0.75, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.system(size: size * 0.7, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
             case .deepseek:
                 Image(systemName: "waveform.path.ecg")
-                    .font(.system(size: size * 0.75, weight: .medium))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.system(size: size * 0.7, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
             case .gemini:
                 Image(systemName: "sparkles")
-                    .font(.system(size: size * 0.75, weight: .medium))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.system(size: size * 0.7, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
             case .openrouter:
                 Image(systemName: "arrow.triangle.branch")
-                    .font(.system(size: size * 0.75, weight: .medium))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.system(size: size * 0.7, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
             case .ollama:
                 Image(systemName: "desktopcomputer")
-                    .font(.system(size: size * 0.75, weight: .medium))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.system(size: size * 0.7, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
             case .custom:
                 Image(systemName: "terminal")
-                    .font(.system(size: size * 0.75, weight: .medium))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.system(size: size * 0.7, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
             }
         }
         .frame(width: size, height: size)
-        .overlay(
+        .background(
             RoundedRectangle(cornerRadius: size * 0.3)
-                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                .fill(Color.white.opacity(0.06))
         )
     }
 }
 
-// MARK: - Settings Icon View — with border
-
+// MARK: - Settings Icon View
 struct SettingsIconView: View {
     let iconName: String
     var size: CGFloat = 16
@@ -53,11 +50,11 @@ struct SettingsIconView: View {
     var body: some View {
         Image(systemName: iconName)
             .font(.system(size: size, weight: .medium))
-            .foregroundColor(.white.opacity(0.7))
-            .frame(width: 34, height: 34)
-            .overlay(
+            .foregroundColor(.white.opacity(0.6))
+            .frame(width: 32, height: 32)
+            .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    .fill(Color.white.opacity(0.06))
             )
     }
 }

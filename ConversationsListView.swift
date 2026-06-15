@@ -6,10 +6,12 @@ struct ConversationsListView: View {
     
     var body: some View {
         ZStack {
-            Color.appBackground.ignoresSafeArea()
+            // Deep background
+            Color(red: 0.05, green: 0.05, blue: 0.08)
+                .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header with glassEffect
+                // Header
                 HStack {
                     Text("Chats")
                         .font(.system(size: 24, weight: .bold))
@@ -19,11 +21,14 @@ struct ConversationsListView: View {
                     
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 30, weight: .medium))
-                            .foregroundColor(.white.opacity(0.6))
-                            .frame(width: 44, height: 44)
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundColor(Color.white.opacity(0.5))
+                            .frame(width: 40, height: 40)
+                            .background(
+                                Circle()
+                                    .fill(Color.white.opacity(0.08))
+                            )
                     }
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 18)
@@ -31,16 +36,26 @@ struct ConversationsListView: View {
                 
                 if appState.conversations.isEmpty {
                     Spacer()
-                    VStack(spacing: 12) {
+                    
+                    VStack(spacing: 14) {
                         Image(systemName: "bubble.left.and.bubble.right.fill")
                             .font(.system(size: 44, weight: .light))
-                            .foregroundColor(.white.opacity(0.12))
+                            .foregroundColor(.white.opacity(0.08))
+                        
                         Text("No conversations yet")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.25))
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white.opacity(0.2))
                     }
-                    .padding(32)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 20))
+                    .padding(40)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.white.opacity(0.03))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.white.opacity(0.05), lineWidth: 0.5)
+                    )
+                    
                     Spacer()
                 } else {
                     ScrollView {
@@ -61,38 +76,45 @@ struct ConversationsListView: View {
     }
 }
 
-// MARK: - Conversation Row with glassEffect
+// MARK: - Conversation Row
 struct ConversationRow: View {
     let conversation: Conversation
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 ProviderIconView(provider: conversation.provider, size: 22)
                     .frame(width: 36, height: 36)
                 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(conversation.title)
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
+                        .lineLimit(1)
+                    
                     HStack(spacing: 4) {
                         Image(systemName: "message.fill")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(.white.opacity(0.2))
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.white.opacity(0.15))
                         Text("\(conversation.messages.count) messages")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.3))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.white.opacity(0.25))
                     }
                 }
+                
                 Spacer()
+                
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(.white.opacity(0.15))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.12))
             }
-            .padding(.horizontal, 18)
+            .padding(.horizontal, 16)
             .padding(.vertical, 14)
         }
-        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 14))
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.white.opacity(0.05))
+        )
     }
 }
