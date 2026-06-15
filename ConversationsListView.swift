@@ -9,37 +9,32 @@ struct ConversationsListView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header with close button
+                // Header — title left, close RIGHT
                 HStack {
-                    Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.8))
-                            .frame(width: 32, height: 32)
-                    }
-                    .glassEffect(.regular.interactive())
-                    
-                    Spacer()
-                    
-                    Text("Conversations")
-                        .font(.system(size: 18, weight: .medium))
+                    Text("Chats")
+                        .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.white)
                     
                     Spacer()
                     
-                    Color.clear.frame(width: 32, height: 32)
+                    Button(action: { withAnimation { dismiss() } }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                    .glassEffect(.regular.interactive())
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.vertical, 14)
                 
                 if appState.conversations.isEmpty {
                     Spacer()
                     VStack(spacing: 12) {
                         Image(systemName: "bubble.left.and.bubble.right.fill")
-                            .font(.system(size: 40))
+                            .font(.system(size: 44, weight: .light))
                             .foregroundColor(.white.opacity(0.12))
                         Text("No conversations yet")
-                            .font(.system(size: 16))
+                            .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.white.opacity(0.25))
                     }
                     .padding(32)
@@ -54,20 +49,20 @@ struct ConversationsListView: View {
                                     
                                     VStack(alignment: .leading, spacing: 3) {
                                         Text(conversation.title)
-                                            .font(.system(size: 15, weight: .medium))
+                                            .font(.system(size: 17, weight: .semibold))
                                             .foregroundColor(.white)
                                         HStack(spacing: 4) {
                                             Image(systemName: "message.fill")
-                                                .font(.system(size: 10))
+                                                .font(.system(size: 11, weight: .medium))
                                                 .foregroundColor(.white.opacity(0.2))
                                             Text("\(conversation.messages.count) messages")
-                                                .font(.system(size: 13))
+                                                .font(.system(size: 14, weight: .medium))
                                                 .foregroundColor(.white.opacity(0.3))
                                         }
                                     }
                                     Spacer()
                                     Image(systemName: "chevron.right")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .font(.system(size: 13, weight: .bold))
                                         .foregroundColor(.white.opacity(0.15))
                                 }
                                 .padding(.vertical, 4)

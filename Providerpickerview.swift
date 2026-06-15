@@ -9,37 +9,23 @@ struct ProviderPickerView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header with glass buttons
+                // Header — title left, close RIGHT
                 HStack {
-                    // Close button — new style with glassEffect
-                    Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.8))
-                            .frame(width: 32, height: 32)
-                    }
-                    .glassEffect(.regular.interactive())
-                    
-                    Spacer()
-                    
                     Text("Select Provider")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.white)
                     
                     Spacer()
                     
-                    // Done button with glassEffect
                     Button(action: { withAnimation { dismiss() } }) {
-                        Text("Done")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.8))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundColor(.white.opacity(0.6))
                     }
                     .glassEffect(.regular.interactive())
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.vertical, 14)
                 
                 // Provider list — NO ovals
                 ScrollView {
@@ -73,16 +59,16 @@ struct ProviderRow: View {
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(provider.rawValue)
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.white)
                     Text(provider.defaultModel)
-                        .font(.system(size: 12))
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.white.opacity(0.3))
                 }
                 Spacer()
                 if isSelected {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.white.opacity(0.7))
                 }
             }

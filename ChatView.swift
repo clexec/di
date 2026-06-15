@@ -19,7 +19,7 @@ struct ChatView: View {
                 .opacity(0.35)
             
             // Dark overlay so content is readable
-            Color.black.opacity(0.4).ignoresSafeArea()
+            Color.black.opacity(0.35).ignoresSafeArea()
             
             VStack(spacing: 0) {
                 topNavBar
@@ -39,34 +39,38 @@ struct ChatView: View {
     
     // MARK: - Top Nav Bar
     private var topNavBar: some View {
-        HStack(spacing: 10) {
-            // Settings button
-            Button(action: { showSettings = true }) {
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
+        HStack(spacing: 8) {
+            // Settings + Chats — side by side, compact
+            HStack(spacing: 4) {
+                // Settings button
+                Button(action: { showSettings = true }) {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 36, height: 36)
+                }
+                
+                // Chats button
+                Button(action: { showConversations = true }) {
+                    Image(systemName: "bubble.left.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 36, height: 36)
+                }
             }
-            .glassEffect(.regular.interactive())
-            
-            // Chats button
-            Button(action: { showConversations = true }) {
-                Image(systemName: "bubble.left.fill")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
-            }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
             .glassEffect(.regular.interactive())
             
             // Model selector — tap to open popup (NO oval, just text + chevron)
             Button(action: { withAnimation(.spring(response: 0.3)) { showModelPicker.toggle() } }) {
                 HStack(spacing: 4) {
                     Text(appState.selectedAIModel.displayName)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
                         .lineLimit(1)
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: 11, weight: .bold))
                         .foregroundColor(.white.opacity(0.5))
                         .rotationEffect(.degrees(showModelPicker ? 180 : 0))
                 }
@@ -77,9 +81,9 @@ struct ChatView: View {
             // New chat button
             Button(action: { withAnimation { messages = [] } }) {
                 Image(systemName: "square.and.pencil")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
+                    .frame(width: 36, height: 36)
             }
             .glassEffect(.regular.interactive())
         }
@@ -99,7 +103,7 @@ struct ChatView: View {
             // Popup card — compact
             VStack(spacing: 0) {
                 Text("Select model")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white.opacity(0.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 16)
@@ -118,7 +122,7 @@ struct ChatView: View {
                             HStack(spacing: 10) {
                                 if appState.selectedAIModel == model {
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 13, weight: .semibold))
+                                        .font(.system(size: 14, weight: .bold))
                                         .foregroundColor(.white)
                                         .frame(width: 16)
                                 } else {
@@ -126,14 +130,14 @@ struct ChatView: View {
                                 }
                                 
                                 Text(model.displayName)
-                                    .font(.system(size: 15, weight: .medium))
+                                    .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(.white)
                                     .lineLimit(1)
                                 
                                 if let sub = model.subtitle {
                                     Text(sub)
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.white.opacity(0.3))
+                                        .font(.system(size: 13, weight: .medium))
+                                        .foregroundColor(.white.opacity(0.35))
                                 }
                                 
                                 Spacer()
@@ -151,23 +155,23 @@ struct ChatView: View {
                     }) {
                         HStack(spacing: 10) {
                             Image(systemName: "link")
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.4))
                                 .frame(width: 16)
                             
                             VStack(alignment: .leading, spacing: 1) {
                                 Text("LM Link")
-                                    .font(.system(size: 15, weight: .medium))
+                                    .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(.white)
                                 Text("Login required")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: 12, weight: .medium))
                                     .foregroundColor(.white.opacity(0.25))
                             }
                             
                             Spacer()
                             
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.system(size: 12, weight: .bold))
                                 .foregroundColor(.white.opacity(0.15))
                         }
                         .padding(.horizontal, 16)
@@ -177,7 +181,8 @@ struct ChatView: View {
                 .padding(.bottom, 12)
             }
             .frame(width: 260)
-            .glassEffect(.regular)
+            .background(Color(red: 0.15, green: 0.15, blue: 0.18))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
             .transition(.opacity.combined(with: .scale(scale: 0.95)))
         }
     }
@@ -189,16 +194,16 @@ struct ChatView: View {
             
             VStack(spacing: 20) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 44, weight: .light))
+                    .font(.system(size: 48, weight: .light))
                     .foregroundColor(.white.opacity(0.15))
                 
                 Text("Use models from your computer")
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.system(size: 26, weight: .bold))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                 
                 Text("Link to LM Studio and run larger models remotely from your computer. End-to-end encrypted.")
-                    .font(.system(size: 16, weight: .regular))
+                    .font(.system(size: 17, weight: .medium))
                     .foregroundColor(.white.opacity(0.4))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
@@ -206,9 +211,9 @@ struct ChatView: View {
                 Button(action: {}) {
                     HStack(spacing: 8) {
                         Image(systemName: "bolt.fill")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.system(size: 15, weight: .semibold))
                         Text("Try it")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.system(size: 17, weight: .bold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 44)
@@ -257,7 +262,7 @@ struct ChatView: View {
             // Plus button
             Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
                 Image(systemName: "plus")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(width: 42, height: 42)
             }
@@ -266,7 +271,7 @@ struct ChatView: View {
             // Text field
             TextField("Ask anything", text: $messageText)
                 .foregroundColor(.white)
-                .font(.system(size: 16))
+                .font(.system(size: 17, weight: .medium))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 .glassEffect(.regular)
@@ -283,7 +288,7 @@ struct ChatView: View {
         .padding(.bottom, 8)
     }
     
-    // MARK: - Attach Menu
+    // MARK: - Attach Menu — rounded rectangle, NO ovals
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear.contentShape(Rectangle())
@@ -291,10 +296,13 @@ struct ChatView: View {
             
             VStack(alignment: .leading, spacing: 0) {
                 AttachMenuItem(icon: "doc.fill", title: "Attach file", subtitle: nil) { withAnimation { showAttachMenu = false } }
+                Divider().background(Color.white.opacity(0.06))
                 AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
+                Divider().background(Color.white.opacity(0.06))
                 AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
             }
-            .glassEffect(.regular)
+            .background(Color(red: 0.15, green: 0.15, blue: 0.18))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
             .padding(.leading, 14)
             .padding(.bottom, 80)
             .frame(width: 260)
@@ -345,11 +353,11 @@ struct QuickPromptChip: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Image(systemName: icon)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.white.opacity(0.6))
-                    Text(title).font(.system(size: 14, weight: .bold)).foregroundColor(.white)
+                    Text(title).font(.system(size: 15, weight: .bold)).foregroundColor(.white)
                 }
-                Text(subtitle).font(.system(size: 13)).foregroundColor(.white.opacity(0.4))
+                Text(subtitle).font(.system(size: 14, weight: .medium)).foregroundColor(.white.opacity(0.4))
             }
             .padding(.horizontal, 16).padding(.vertical, 14)
         }
@@ -367,11 +375,11 @@ struct ChatBubble: View {
             HStack(spacing: 8) {
                 if !message.isUser {
                     Image(systemName: "sparkles")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.white.opacity(0.5))
                 }
                 Text(message.content)
-                    .font(.system(size: 16))
+                    .font(.system(size: 17, weight: .medium))
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 14).padding(.vertical, 10)
@@ -393,12 +401,12 @@ struct AttachMenuItem: View {
         Button(action: action) {
             HStack(spacing: 14) {
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white.opacity(0.7))
                     .frame(width: 28)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.system(size: 16, weight: .medium)).foregroundColor(.white)
-                    if let subtitle { Text(subtitle).font(.system(size: 12)).foregroundColor(.white.opacity(0.35)) }
+                    Text(title).font(.system(size: 16, weight: .semibold)).foregroundColor(.white)
+                    if let subtitle { Text(subtitle).font(.system(size: 13, weight: .medium)).foregroundColor(.white.opacity(0.35)) }
                 }
                 Spacer()
             }
@@ -414,7 +422,7 @@ struct TypingIndicator: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: "ellipsis")
-                .font(.system(size: 16, weight: .medium))
+                .font(.system(size: 17, weight: .semibold))
                 .foregroundColor(.white.opacity(0.5))
         }
         .padding(.horizontal, 16).padding(.vertical, 12)

@@ -7,62 +7,96 @@ struct VideoBackgroundView: UIViewRepresentable {
     let videoName: String
     
     func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .clear
-        
-        guard let url = Bundle.main.url(forResource: videoName, withExtension: "mp4") else {
-            print("Video not found: \(videoName).mp4")
-            return view
+        let view = LoopingVideoPlayerView(frame: .zero)
+        view.setup(videoName: videoName)
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        uiView.frame = uiView.superview?.bounds ?? .zero
+        if let playerView = uiView as? LoopingVideoPlayerView {
+            playerView.resizeLayer()
         }
-        
-        let player = AVPlayer(url: url)
+    }
+}
+
+class LoopingVideoPlayerView: UIView {
+    private var player: AVPlayer?
+    private var playerLayer: AVPlayerLayer?
+    private var observer: Any?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        isUserInteractionEnabled = false
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        backgroundColor = .clear
+        isUserInteractionEnabled = false
+    }
+    
+    func setup(videoName: String) {
+        guard let url = Bundle.main.url(forResource: videoName, withExtension: "mp4") else {
+            print("Video not found: \(videoName).mp4 — checking bundle resources")
+            // Try alternative: check if file is in Documents or bundle root
+            if let altURL = Bundle.main.url(forResource: videoName, withExtension: "mp4", subdirectory: nil) {
+                setupPlayer(url: altURL)
+            } else {
+                print("Video definitely not found in bundle")
+            }
+            return
+        }
+        setupPlayer(url: url)
+    }
+    
+    private func setupPlayer(url: URL) {
+        let playerItem = AVPlayerItem(url: url)
+        let player = AVPlayer(playerItem: playerItem)
         player.actionAtItemEnd = .none
+        player.isMuted = true
         
-        // Slow down playback to ~0.7x speed
-        player.rate = 0.7
+        let layer = AVPlayerLayer(player: player)
+        layer.videoGravity = .resizeAspectFill
+        layer.frame = self.bounds
+        self.layer.addSublayer(layer)
+        self.playerLayer = layer
+        self.player = player
         
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspectFill
-        playerLayer.frame = view.bounds
-        view.layer.addSublayer(playerLayer)
-        
-        // Loop with 2-second delay after video ends
-        let controller = PlayerController(player: player)
-        context.coordinator.controller = controller
-        
-        NotificationCenter.default.addObserver(
+        // Observe end to loop with 2s delay
+        self.observer = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
-            object: player.currentItem,
+            object: playerItem,
             queue: .main
-        ) { _ in
-            // Wait 2 seconds then restart
+        ) { [weak self] _ in
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 player.seek(to: .zero)
                 player.play()
             }
         }
         
+        // Slow playback
         player.play()
-        
-        return view
-    }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {
-        if let layer = uiView.layer.sublayers?.first as? AVPlayerLayer {
-            layer.frame = uiView.bounds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            player.rate = 0.7
         }
     }
     
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
+    func resizeLayer() {
+        if let layer = playerLayer {
+            layer.frame = self.bounds
+        }
     }
     
-    class Coordinator {
-        var controller: PlayerController?
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer?.frame = self.bounds
     }
     
-    class PlayerController {
-        let player: AVPlayer
-        init(player: AVPlayer) { self.player = player }
+    deinit {
+        if let obs = observer {
+            NotificationCenter.default.removeObserver(obs)
+        }
     }
 }

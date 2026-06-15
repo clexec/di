@@ -24,6 +24,8 @@ targets:
           - ".git"
           - "build"
           - "DeAI.xcodeproj"
+    resources:
+      - path: bg_video.mp4
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.deai.app
