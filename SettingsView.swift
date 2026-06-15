@@ -3,26 +3,23 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) var dismiss
-    @State private var apiKey: String = ""
     @State private var showPersonalization: Bool = false
+    @Namespace private var glassNS
     
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — NO navigation bar
+                // Header
                 HStack {
                     Button(action: { dismiss() }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color(hex: "#374151"))
-                                .frame(width: 40, height: 40)
-                            Image(systemName: "xmark")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.white)
-                        }
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(10)
                     }
+                    .glassEffect(.regular.interactive())
                     
                     Spacer()
                     
@@ -38,91 +35,79 @@ struct SettingsView: View {
                 .padding(.vertical, 12)
                 
                 ScrollView {
-                    VStack(spacing: 12) {
-                        // APP section
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("APP")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(Color(hex: "#9CA3AF"))
-                                .padding(.leading, 4)
-                            
-                            VStack(spacing: 0) {
-                                SettingsRow(icon: "cube.fill", iconColor: Color(hex: "#8B5CF6"), title: "Manage models", subtitle: nil) {}
-                                Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                SettingsRow(icon: "link", iconColor: Color(hex: "#10B981"), title: "LM Link", subtitle: nil, badge: "New") {}
-                                Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                SettingsRow(icon: "person.fill", iconColor: Color(hex: "#8B5CF6"), title: "Personalization", subtitle: nil) {
-                                    showPersonalization = true
+                    GlassEffectContainer(spacing: 40) {
+                        VStack(spacing: 12) {
+                            // APP section
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("APP")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(Color(hex: "#9CA3AF"))
+                                    .padding(.leading, 4)
+                                
+                                VStack(spacing: 0) {
+                                    SettingsRow(icon: "cube.fill", iconColor: .purple, title: "Manage models", subtitle: nil) {}
+                                    Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
+                                    SettingsRow(icon: "link", iconColor: .green, title: "LM Link", subtitle: nil, badge: "New") {}
+                                    Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
+                                    SettingsRow(icon: "person.fill", iconColor: .purple, title: "Personalization", subtitle: nil) {
+                                        showPersonalization = true
+                                    }
+                                    Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
+                                    SettingsRow(icon: "keyboard", iconColor: .gray, title: "Show keyboard on launch", subtitle: nil) {
+                                        appState.showKeyboardOnLaunch.toggle()
+                                    }
+                                    Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
+                                    SettingsRow(icon: "trash.fill", iconColor: .red, title: "Delete conversation history", titleColor: .red, subtitle: nil) {}
                                 }
-                                Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                SettingsRow(icon: "keyboard", iconColor: Color(hex: "#6B7280"), title: "Show keyboard on launch", subtitle: nil) {
-                                    appState.showKeyboardOnLaunch.toggle()
+                                .glassEffect(.regular)
+                            }
+                            
+                            // ABOUT section
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("ABOUT")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(Color(hex: "#9CA3AF"))
+                                    .padding(.leading, 4)
+                                
+                                VStack(spacing: 0) {
+                                    SettingsRow(icon: "doc.text.fill", iconColor: .gray, title: "Terms & Conditions", subtitle: nil) {}
+                                    Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
+                                    SettingsRow(icon: "lock.fill", iconColor: .gray, title: "Privacy Policy", subtitle: nil) {}
+                                    Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
+                                    SettingsRow(icon: "doc.fill", iconColor: .gray, title: "Licenses", subtitle: nil) {}
+                                    Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
+                                    SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "Version 1.57.0", subtitle: nil) {}
                                 }
-                                Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                SettingsRow(icon: "trash.fill", iconColor: Color(hex: "#DC2626"), title: "Delete conversation history", titleColor: Color(hex: "#DC2626"), subtitle: nil) {}
+                                .glassEffect(.regular)
                             }
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(hex: "#1F2937"))
-                            )
-                        }
-                        
-                        // ABOUT section
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("ABOUT")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(Color(hex: "#9CA3AF"))
-                                .padding(.leading, 4)
                             
-                            VStack(spacing: 0) {
-                                SettingsRow(icon: "doc.text.fill", iconColor: Color(hex: "#6B7280"), title: "Terms & Conditions", subtitle: nil) {}
-                                Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                SettingsRow(icon: "lock.fill", iconColor: Color(hex: "#6B7280"), title: "Privacy Policy", subtitle: nil) {}
-                                Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                SettingsRow(icon: "doc.fill", iconColor: Color(hex: "#6B7280"), title: "Licenses", subtitle: nil) {}
-                                Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                SettingsRow(icon: "info.circle.fill", iconColor: Color(hex: "#6B7280"), title: "Version 1.57.0", subtitle: nil) {}
+                            // MORE section
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("MORE")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(Color(hex: "#9CA3AF"))
+                                    .padding(.leading, 4)
+                                
+                                VStack(spacing: 0) {
+                                    SettingsRow(icon: "paperplane.fill", iconColor: .yellow, title: "Share the app", subtitle: nil) {}
+                                }
+                                .glassEffect(.regular)
                             }
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(hex: "#1F2937"))
-                            )
                         }
-                        
-                        // MORE section
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("MORE")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(Color(hex: "#9CA3AF"))
-                                .padding(.leading, 4)
-                            
-                            VStack(spacing: 0) {
-                                SettingsRow(icon: "paperplane.fill", iconColor: Color(hex: "#F59E0B"), title: "Share the app", subtitle: nil) {}
-                            }
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(hex: "#1F2937"))
-                            )
-                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
                 }
             }
         }
         .preferredColorScheme(.dark)
-        .sheet(isPresented: $showPersonalization) {
-            PersonalizationView()
-        }
-        .onAppear {
-            apiKey = appState.apiKeys[appState.selectedProvider] ?? ""
-        }
+        .sheet(isPresented: $showPersonalization) { PersonalizationView() }
     }
 }
 
 struct SettingsRow: View {
     let icon: String
-    var iconColor: Color = Color(hex: "#6B7280")
+    var iconColor: Color = .gray
     let title: String
     var titleColor: Color = .white
     let subtitle: String?
@@ -152,10 +137,7 @@ struct SettingsRow: View {
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(
-                                    Capsule()
-                                        .fill(badge == "New" ? Color(hex: "#10B981") : Color(hex: "#F59E0B"))
-                                )
+                                .glassEffect(.regular.tint(badge == "New" ? .green : .yellow))
                         }
                     }
                     if let subtitle {

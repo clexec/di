@@ -9,10 +9,11 @@ struct ChatView: View {
     @State private var showSettings: Bool = false
     @State private var showConversations: Bool = false
     @State private var showProviderPicker: Bool = false
+    @Namespace private var glassNS
     
     var body: some View {
         ZStack {
-            // Background gradient
+            // Background
             LinearGradient(
                 colors: [Color(hex: "#4C1D95"), Color(hex: "#1F1F2E"), Color.black],
                 startPoint: .top,
@@ -21,7 +22,6 @@ struct ChatView: View {
             .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Top nav bar — glass capsule
                 topNavBar
                 
                 if messages.isEmpty {
@@ -37,79 +37,58 @@ struct ChatView: View {
                 attachMenuOverlay
             }
         }
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
-        }
-        .sheet(isPresented: $showConversations) {
-            ConversationsListView()
-        }
-        .sheet(isPresented: $showProviderPicker) {
-            ProviderPickerView()
-        }
+        .sheet(isPresented: $showSettings) { SettingsView() }
+        .sheet(isPresented: $showConversations) { ConversationsListView() }
+        .sheet(isPresented: $showProviderPicker) { ProviderPickerView() }
     }
     
-    // MARK: - Top Nav Bar (glass capsule)
+    // MARK: - Top Nav Bar
     private var topNavBar: some View {
-        HStack(spacing: 10) {
-            // Settings + Conversations buttons in glass capsule
-            HStack(spacing: 8) {
-                Button(action: { showSettings = true }) {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.white)
+        GlassEffectContainer(spacing: 40) {
+            HStack(spacing: 10) {
+                HStack(spacing: 8) {
+                    Button(action: { showSettings = true }) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(.white)
+                    }
+                    .glassEffectID("navButtons", in: glassNS)
+                    
+                    Button(action: { showConversations = true }) {
+                        Image(systemName: "bubble.left.fill")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(.white)
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .glassEffect(.regular.interactive())
+                
+                Button(action: { showProviderPicker = true }) {
+                    HStack(spacing: 4) {
+                        Text(appState.selectedModel)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.white)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.4))
+                    }
                 }
                 
-                Button(action: { showConversations = true }) {
-                    Image(systemName: "bubble.left.fill")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.white)
-                }
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .background(
-                Capsule()
-                    .fill(Color(hex: "#1F2937").opacity(0.9))
-            )
-            .background(
-                Capsule()
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.4)
-            )
-            .overlay(
-                Capsule()
-                    .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
-            )
-            
-            // Model selector
-            Button(action: { showProviderPicker = true }) {
-                HStack(spacing: 4) {
-                    Text(appState.selectedModel)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.white)
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.4))
-                }
-            }
-            
-            Spacer()
-            
-            // New chat button
-            Button(action: { messages = [] }) {
-                ZStack {
-                    Circle()
-                        .fill(Color(hex: "#6D28D9"))
-                        .frame(width: 40, height: 40)
+                Spacer()
+                
+                Button(action: { messages = [] }) {
                     Image(systemName: "square.and.pencil")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.white)
+                        .padding(10)
                 }
+                .glassEffect(.regular.interactive().tint(.purple))
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 12)
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-        .padding(.bottom, 12)
     }
     
     // MARK: - Empty State
@@ -135,11 +114,8 @@ struct ChatView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 44)
                         .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(hex: "#312E81"))
-                        )
                 }
+                .glassEffect(.regular.interactive().tint(.purple))
                 .padding(.top, 4)
             }
             .padding(.horizontal, 20)
@@ -152,21 +128,23 @@ struct ChatView: View {
     
     // MARK: - Quick Prompts
     private var quickPromptsRow: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                QuickPromptChip(title: "Design", subtitle: "a workout routine") {
-                    messageText = "Design a workout routine"
+        GlassEffectContainer(spacing: 20) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    QuickPromptChip(title: "Design", subtitle: "a workout routine") {
+                        messageText = "Design a workout routine"
+                    }
+                    QuickPromptChip(title: "Explain", subtitle: "a complex topic simply") {
+                        messageText = "Explain a complex topic simply"
+                    }
+                    QuickPromptChip(title: "Master", subtitle: "smartphone photography") {
+                        messageText = "Master smartphone photography"
+                    }
                 }
-                QuickPromptChip(title: "Explain", subtitle: "a complex topic simply") {
-                    messageText = "Explain a complex topic simply"
-                }
-                QuickPromptChip(title: "Master", subtitle: "smartphone photography") {
-                    messageText = "Master smartphone photography"
-                }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
+            .padding(.bottom, 12)
         }
-        .padding(.bottom, 12)
     }
     
     // MARK: - Messages List
@@ -192,51 +170,36 @@ struct ChatView: View {
     
     // MARK: - Bottom Input
     private var bottomInputArea: some View {
-        VStack(spacing: 0) {
+        GlassEffectContainer(spacing: 0) {
             HStack(spacing: 12) {
                 Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(hex: "#374151"))
-                            .frame(width: 40, height: 40)
-                        Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
-                    }
+                    Image(systemName: "plus")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white)
+                        .padding(10)
                 }
+                .glassEffect(.regular.interactive())
                 
                 TextField("Ask anything", text: $messageText)
                     .foregroundColor(.white)
                     .font(.system(size: 16))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 11)
-                    .background(
-                        Capsule()
-                            .fill(Color(hex: "#1F2937").opacity(0.9))
-                    )
-                    .background(
-                        Capsule()
-                            .fill(.ultraThinMaterial)
-                            .opacity(0.3)
-                    )
+                    .glassEffect(.regular)
                 
                 Button(action: sendMessage) {
-                    ZStack {
-                        Circle()
-                            .fill(messageText.isEmpty ? Color(hex: "#374151") : Color(hex: "#3B82F6"))
-                            .frame(width: 40, height: 40)
-                        Image(systemName: "arrow.up")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                    }
+                    Image(systemName: "arrow.up")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(messageText.isEmpty ? .white.opacity(0.35) : .white)
+                        .padding(10)
                 }
+                .glassEffect(.regular.interactive().tint(.blue))
                 .disabled(messageText.isEmpty)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .padding(.bottom, 8)
         }
-        .background(Color(hex: "#1F2937").opacity(0.95))
     }
     
     // MARK: - Attach Menu
@@ -246,26 +209,14 @@ struct ChatView: View {
                 .contentShape(Rectangle())
                 .onTapGesture { withAnimation(.spring()) { showAttachMenu = false } }
             
-            VStack(alignment: .leading, spacing: 0) {
-                AttachMenuItem(icon: "folder.fill", title: "Attach file", subtitle: nil) { showAttachMenu = false }
-                Divider().background(Color.white.opacity(0.06))
-                AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { showAttachMenu = false }
-                Divider().background(Color.white.opacity(0.06))
-                AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { showAttachMenu = false }
+            GlassEffectContainer(spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
+                    AttachMenuItem(icon: "folder.fill", title: "Attach file", subtitle: nil) { showAttachMenu = false }
+                    AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { showAttachMenu = false }
+                    AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { showAttachMenu = false }
+                }
+                .glassEffect(.regular)
             }
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(hex: "#1F2937").opacity(0.95))
-            )
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.3)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
-            )
             .padding(.leading, 14)
             .padding(.bottom, 80)
             .frame(width: 260)
@@ -273,11 +224,10 @@ struct ChatView: View {
         .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .bottomLeading)))
     }
     
-    // MARK: - Send Message
+    // MARK: - Send
     private func sendMessage() {
         guard !messageText.isEmpty else { return }
-        let userMsg = ChatMessage(content: messageText, isUser: true, timestamp: Date())
-        messages.append(userMsg)
+        messages.append(ChatMessage(content: messageText, isUser: true, timestamp: Date()))
         let prompt = messageText
         messageText = ""
         isLoading = true
@@ -324,20 +274,8 @@ struct QuickPromptChip: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(hex: "#1F2937").opacity(0.9))
-            )
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.3)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
-            )
         }
+        .glassEffect(.regular.interactive().tint(.purple))
     }
 }
 
@@ -354,15 +292,10 @@ struct ChatBubble: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(message.isUser ? Color(hex: "#374151") : Color(hex: "#4B5563"))
-                )
+                .glassEffect(message.isUser ? .regular.tint(.purple) : .clear)
                 .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
             
-            if !message.isUser {
-                Spacer()
-            }
+            if !message.isUser { Spacer() }
         }
     }
 }
@@ -420,7 +353,7 @@ struct TypingIndicator: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(hex: "#4B5563")))
+        .glassEffect(.clear)
         .onAppear { animating = true }
     }
 }

@@ -3,6 +3,7 @@ import SwiftUI
 struct ConversationsListView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) var dismiss
+    @Namespace private var glassNS
     
     var body: some View {
         ZStack {
@@ -12,15 +13,12 @@ struct ConversationsListView: View {
                 // Header
                 HStack {
                     Button(action: { dismiss() }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color(hex: "#374151"))
-                                .frame(width: 40, height: 40)
-                            Image(systemName: "xmark")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.white)
-                        }
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(10)
                     }
+                    .glassEffect(.regular.interactive())
                     
                     Spacer()
                     
@@ -33,7 +31,7 @@ struct ConversationsListView: View {
                     Button(action: { dismiss() }) {
                         Text("Done")
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Color(hex: "#3B82F6"))
+                            .foregroundColor(.blue)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -49,46 +47,51 @@ struct ConversationsListView: View {
                             .font(.system(size: 16))
                             .foregroundColor(.white.opacity(0.25))
                     }
+                    .glassEffect(.clear)
+                    .padding(32)
                     Spacer()
                 } else {
-                    List {
-                        ForEach(appState.conversations) { conversation in
-                            Button(action: {
-                                appState.currentConversation = conversation
-                                dismiss()
-                            }) {
-                                HStack(spacing: 12) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(conversation.provider.color.opacity(0.2))
-                                            .frame(width: 36, height: 36)
-                                        Image(systemName: conversation.provider.icon)
-                                            .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(conversation.provider.color)
+                    GlassEffectContainer(spacing: 30) {
+                        List {
+                            ForEach(appState.conversations) { conversation in
+                                Button(action: {
+                                    appState.currentConversation = conversation
+                                    dismiss()
+                                }) {
+                                    HStack(spacing: 12) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(conversation.provider.color.opacity(0.2))
+                                                .frame(width: 36, height: 36)
+                                            Image(systemName: conversation.provider.icon)
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundColor(conversation.provider.color)
+                                        }
+                                        
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            Text(conversation.title)
+                                                .font(.system(size: 15, weight: .medium))
+                                                .foregroundColor(.white)
+                                            Text("\(conversation.messages.count) messages")
+                                                .font(.system(size: 13))
+                                                .foregroundColor(.white.opacity(0.3))
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 12, weight: .semibold))
+                                            .foregroundColor(.white.opacity(0.15))
                                     }
-                                    
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        Text(conversation.title)
-                                            .font(.system(size: 15, weight: .medium))
-                                            .foregroundColor(.white)
-                                        Text("\(conversation.messages.count) messages")
-                                            .font(.system(size: 13))
-                                            .foregroundColor(.white.opacity(0.3))
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(.white.opacity(0.15))
+                                    .padding(.vertical, 4)
                                 }
-                                .padding(.vertical, 4)
+                                .listRowBackground(Color.clear)
+                                .glassEffect(.clear.interactive())
                             }
-                            .listRowBackground(Color(hex: "#1F2937"))
                         }
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                 }
             }
         }
