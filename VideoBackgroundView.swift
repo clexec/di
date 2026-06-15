@@ -20,7 +20,6 @@ struct VideoBackgroundView: UIViewRepresentable {
     }
 }
 
-@MainActor
 class LoopingVideoPlayerView: UIView {
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -89,9 +88,12 @@ class LoopingVideoPlayerView: UIView {
         playerLayer?.frame = self.bounds
     }
     
-    deinit {
-        if let obs = observer {
-            NotificationCenter.default.removeObserver(obs)
+    nonisolated deinit {
+        let obs = observer
+        Task { @MainActor in
+            if let obs {
+                NotificationCenter.default.removeObserver(obs)
+            }
         }
     }
 }
