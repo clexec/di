@@ -97,7 +97,7 @@ final class AIService {
 }
 
 struct OpenAIResponse: Decodable { let choices: [Choice]; struct Choice: Decodable { let message: Message }; struct Message: Decodable { let content: String } }
-struct OllamaResponse: Decodable { let message: OllamaMessage }; struct OllamaMessage: Decodable { let content: String } }
+struct OllamaResponse: Decodable { let message: OllamaMessage }; struct OllamaMessage: Decodable { let content: String }
 
 enum AIError: LocalizedError {
     case invalidURL, invalidResponse, emptyResponse, apiError(statusCode: Int, message: String), invalidConfiguration
