@@ -50,9 +50,10 @@ struct ChatView: View {
                 .padding(.vertical, 10)
                 .glassEffect(.regular.interactive())
                 
-                // Model selector button
+                // Model selector button with provider icon
                 Button(action: { withAnimation { showProviderPicker = true } }) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 6) {
+                        ProviderIconView(provider: appState.selectedProvider, size: 16)
                         Text(appState.selectedModel)
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(.white)
@@ -86,6 +87,8 @@ struct ChatView: View {
             Spacer()
             
             VStack(spacing: 20) {
+                ProviderIconView(provider: appState.selectedProvider, size: 48)
+                
                 Text("Use models from your computer")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.white)
@@ -98,11 +101,15 @@ struct ChatView: View {
                     .padding(.horizontal, 28)
                 
                 Button(action: {}) {
-                    Text("Try it")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 44)
-                        .padding(.vertical, 12)
+                    HStack(spacing: 8) {
+                        Image(systemName: "bolt.fill")
+                            .font(.system(size: 14, weight: .medium))
+                        Text("Try it")
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 44)
+                    .padding(.vertical, 12)
                 }
                 .glassEffect(.regular.interactive())
                 .padding(.top, 4)
@@ -111,13 +118,13 @@ struct ChatView: View {
             
             Spacer()
             
-            // Quick prompts
+            // Quick prompts with SF Symbol icons
             GlassEffectContainer(spacing: 20) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
-                        QuickPromptChip(title: "Design", subtitle: "a workout routine") { messageText = "Design a workout routine" }
-                        QuickPromptChip(title: "Explain", subtitle: "a complex topic simply") { messageText = "Explain a complex topic simply" }
-                        QuickPromptChip(title: "Master", subtitle: "smartphone photography") { messageText = "Master smartphone photography" }
+                        QuickPromptChip(icon: "dumbbell.fill", title: "Design", subtitle: "a workout routine") { messageText = "Design a workout routine" }
+                        QuickPromptChip(icon: "lightbulb.fill", title: "Explain", subtitle: "a complex topic simply") { messageText = "Explain a complex topic simply" }
+                        QuickPromptChip(icon: "camera.fill", title: "Master", subtitle: "smartphone photography") { messageText = "Master smartphone photography" }
                     }
                     .padding(.horizontal, 16)
                 }
@@ -147,7 +154,7 @@ struct ChatView: View {
     private var bottomInputArea: some View {
         GlassEffectContainer(spacing: 0) {
             HStack(spacing: 12) {
-                // Plus button
+                // Plus button with SF Symbol
                 Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .medium))
@@ -164,14 +171,12 @@ struct ChatView: View {
                     .padding(.vertical, 11)
                     .glassEffect(.regular)
                 
-                // Send button
+                // Send button with SF Symbol
                 Button(action: sendMessage) {
-                    Image(systemName: "arrow.up")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(messageText.isEmpty ? .white.opacity(0.35) : .white)
-                        .padding(10)
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(messageText.isEmpty ? .white.opacity(0.25) : .white.opacity(0.9))
                 }
-                .glassEffect(.regular.interactive())
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
@@ -179,7 +184,7 @@ struct ChatView: View {
         }
     }
     
-    // MARK: - Attach Menu — rectangular, not oval
+    // MARK: - Attach Menu
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear.contentShape(Rectangle())
@@ -187,7 +192,7 @@ struct ChatView: View {
             
             GlassEffectContainer(spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
-                    AttachMenuItem(icon: "folder.fill", title: "Attach file", subtitle: nil) { withAnimation { showAttachMenu = false } }
+                    AttachMenuItem(icon: "doc.fill", title: "Attach file", subtitle: nil) { withAnimation { showAttachMenu = false } }
                     AttachMenuItem(icon: "camera.fill", title: "Take photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
                     AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
                 }
@@ -231,13 +236,22 @@ struct ChatView: View {
     }
 }
 
-// MARK: - Quick Prompt Chip — no color tint
+// MARK: - Quick Prompt Chip with SF Symbol
 struct QuickPromptChip: View {
-    let title: String; let subtitle: String; let action: () -> Void
+    let icon: String
+    let title: String
+    let subtitle: String
+    let action: () -> Void
+    
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.system(size: 14, weight: .bold)).foregroundColor(.white)
+                HStack(spacing: 6) {
+                    Image(systemName: icon)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.6))
+                    Text(title).font(.system(size: 14, weight: .bold)).foregroundColor(.white)
+                }
                 Text(subtitle).font(.system(size: 13)).foregroundColor(.white.opacity(0.4))
             }
             .padding(.horizontal, 16).padding(.vertical, 14)
@@ -246,31 +260,46 @@ struct QuickPromptChip: View {
     }
 }
 
-// MARK: - Chat Bubble — no color tint, monochrome glass
+// MARK: - Chat Bubble
 struct ChatBubble: View {
     let message: ChatMessage
     var namespace: Namespace.ID
+    
     var body: some View {
         HStack {
             if message.isUser { Spacer() }
-            Text(message.content)
-                .font(.system(size: 16))
-                .foregroundColor(.white)
-                .padding(.horizontal, 14).padding(.vertical, 10)
-                .glassEffect(message.isUser ? .regular.interactive() : .clear.interactive())
-                .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
+            HStack(spacing: 8) {
+                if !message.isUser {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.5))
+                }
+                Text(message.content)
+                    .font(.system(size: 16))
+                    .foregroundColor(.white)
+            }
+            .padding(.horizontal, 14).padding(.vertical, 10)
+            .glassEffect(message.isUser ? .regular.interactive() : .clear.interactive())
+            .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
             if !message.isUser { Spacer() }
         }
     }
 }
 
-// MARK: - Attach Menu Item
+// MARK: - Attach Menu Item with SF Symbols
 struct AttachMenuItem: View {
-    let icon: String; let title: String; let subtitle: String?; let action: () -> Void
+    let icon: String
+    let title: String
+    let subtitle: String?
+    let action: () -> Void
+    
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                Image(systemName: icon).font(.system(size: 18, weight: .medium)).foregroundColor(.white.opacity(0.7)).frame(width: 28)
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white.opacity(0.7))
+                    .frame(width: 28)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.system(size: 16, weight: .medium)).foregroundColor(.white)
                     if let subtitle { Text(subtitle).font(.system(size: 12)).foregroundColor(.white.opacity(0.35)) }
@@ -285,13 +314,12 @@ struct AttachMenuItem: View {
 // MARK: - Typing Indicator
 struct TypingIndicator: View {
     @State private var animating = false
+    
     var body: some View {
-        HStack(spacing: 6) {
-            ForEach(0..<3, id: \.self) { i in
-                Circle().fill(Color.white.opacity(0.4)).frame(width: 8, height: 8)
-                    .offset(y: animating ? -4 : 4)
-                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true).delay(Double(i)*0.15), value: animating)
-            }
+        HStack(spacing: 4) {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white.opacity(0.5))
         }
         .padding(.horizontal, 16).padding(.vertical, 12)
         .glassEffect(.clear)

@@ -13,9 +13,10 @@ struct ProviderPickerView: View {
                 // Header
                 HStack {
                     Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "xmark").font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(10)
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 22, weight: .medium))
+                            .foregroundColor(.white.opacity(0.6))
                     }
-                    .glassEffect(.regular.interactive())
                     
                     Spacer()
                     
@@ -26,11 +27,10 @@ struct ProviderPickerView: View {
                     Button(action: { withAnimation { dismiss() } }) {
                         Text("Done").font(.system(size: 15, weight: .semibold)).foregroundColor(.white.opacity(0.7))
                     }
-                    .glassEffect(.clear.interactive())
                 }
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 
-                // Provider list
+                // Provider list with brand icons
                 ScrollView {
                     GlassEffectContainer(spacing: 40) {
                         VStack(spacing: 8) {
@@ -58,16 +58,19 @@ struct ProviderRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                // Monochrome icon — no colored background
-                Image(systemName: provider.icon)
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
+                // Brand icon from BrandIcons (thesvg.org + SF Symbols)
+                ProviderIconView(provider: provider, size: 28)
                     .frame(width: 40, height: 40)
                 
-                Text(provider.rawValue).font(.system(size: 16, weight: .medium)).foregroundColor(.white)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(provider.rawValue).font(.system(size: 16, weight: .medium)).foregroundColor(.white)
+                    Text(provider.defaultModel).font(.system(size: 12)).foregroundColor(.white.opacity(0.3))
+                }
                 Spacer()
                 if isSelected {
-                    Image(systemName: "checkmark").font(.system(size: 16, weight: .semibold)).foregroundColor(.white.opacity(0.7))
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white.opacity(0.7))
                 }
             }
             .padding(.horizontal, 16).padding(.vertical, 14)

@@ -14,9 +14,10 @@ struct SettingsView: View {
                 // Header
                 HStack {
                     Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "xmark").font(.system(size: 14, weight: .bold)).foregroundColor(.white).padding(10)
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 22, weight: .medium))
+                            .foregroundColor(.white.opacity(0.6))
                     }
-                    .glassEffect(.regular.interactive())
                     
                     Spacer()
                     
@@ -24,7 +25,7 @@ struct SettingsView: View {
                     
                     Spacer()
                     
-                    Color.clear.frame(width: 40, height: 40)
+                    Color.clear.frame(width: 22, height: 22)
                 }
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 
@@ -38,15 +39,15 @@ struct SettingsView: View {
                                 
                                 GlassEffectContainer(spacing: 0) {
                                     VStack(spacing: 0) {
-                                        SettingsRow(icon: "cube.fill", title: "Manage models") {}
+                                        SettingsRow(icon: "cube.box.fill", title: "Manage models") {}
                                         Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                        SettingsRow(icon: "link", title: "LM Link", badge: "New") {}
+                                        SettingsRow(icon: "link.circle.fill", title: "LM Link", badge: "New") {}
                                         Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                        SettingsRow(icon: "person.fill", title: "Personalization") { withAnimation { showPersonalization = true } }
+                                        SettingsRow(icon: "person.crop.circle.fill", title: "Personalization") { withAnimation { showPersonalization = true } }
                                         Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                        SettingsRow(icon: "keyboard", title: "Show keyboard on launch") { appState.showKeyboardOnLaunch.toggle() }
+                                        SettingsRow(icon: "keyboard.fill", title: "Show keyboard on launch") { appState.showKeyboardOnLaunch.toggle() }
                                         Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                        SettingsRow(icon: "trash.fill", title: "Delete conversation history", isDestructive: true) {}
+                                        SettingsRow(icon: "trash.circle.fill", title: "Delete conversation history", isDestructive: true) {}
                                     }
                                     .glassEffect(.regular)
                                 }
@@ -60,9 +61,9 @@ struct SettingsView: View {
                                     VStack(spacing: 0) {
                                         SettingsRow(icon: "doc.text.fill", title: "Terms & Conditions") {}
                                         Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                        SettingsRow(icon: "lock.fill", title: "Privacy Policy") {}
+                                        SettingsRow(icon: "lock.shield.fill", title: "Privacy Policy") {}
                                         Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                        SettingsRow(icon: "doc.fill", title: "Licenses") {}
+                                        SettingsRow(icon: "doc.richtext.fill", title: "Licenses") {}
                                         Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
                                         SettingsRow(icon: "info.circle.fill", title: "Version 1.57.0") {}
                                     }
@@ -76,7 +77,7 @@ struct SettingsView: View {
                                 
                                 GlassEffectContainer(spacing: 0) {
                                     VStack(spacing: 0) {
-                                        SettingsRow(icon: "paperplane.fill", title: "Share the app") {}
+                                        SettingsRow(icon: "square.and.arrow.up.fill", title: "Share the app") {}
                                     }
                                     .glassEffect(.regular)
                                 }
@@ -102,17 +103,17 @@ struct SettingsRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                // Monochrome icon — no colored background square
+                // SF Symbol icon only — no colored background
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(isDestructive ? .white.opacity(0.6) : .white.opacity(0.7))
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(isDestructive ? .white.opacity(0.5) : .white.opacity(0.7))
                     .frame(width: 30, height: 30)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
                         Text(title)
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(isDestructive ? .white.opacity(0.6) : .white)
+                            .foregroundColor(isDestructive ? .white.opacity(0.5) : .white)
                         if let badge {
                             Text(badge)
                                 .font(.system(size: 11, weight: .bold))

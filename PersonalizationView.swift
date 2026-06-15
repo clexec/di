@@ -17,9 +17,10 @@ struct PersonalizationView: View {
                 // Header
                 HStack {
                     Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "chevron.left").font(.system(size: 13, weight: .bold)).foregroundColor(.white).padding(10)
+                        Image(systemName: "chevron.left.circle.fill")
+                            .font(.system(size: 22, weight: .medium))
+                            .foregroundColor(.white.opacity(0.6))
                     }
-                    .glassEffect(.regular.interactive())
                     
                     Spacer()
                     
@@ -28,9 +29,14 @@ struct PersonalizationView: View {
                     Spacer()
                     
                     Button(action: { withAnimation { appState.customInstructions = instructions; dismiss() } }) {
-                        Text("Save").font(.system(size: 15, weight: .medium)).foregroundColor(.white.opacity(0.7)).padding(.horizontal, 14).padding(.vertical, 7)
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 16))
+                            Text("Save")
+                                .font(.system(size: 15, weight: .medium))
+                        }
+                        .foregroundColor(.white.opacity(0.7))
                     }
-                    .glassEffect(.regular.interactive())
                 }
                 .padding(.horizontal, 16).padding(.vertical, 12)
                 
@@ -38,8 +44,11 @@ struct PersonalizationView: View {
                 ScrollView {
                     GlassEffectContainer(spacing: 40) {
                         VStack(spacing: 16) {
-                            // Toggle
+                            // Toggle with SF Symbol
                             HStack {
+                                Image(systemName: "slider.horizontal.3")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.white.opacity(0.6))
                                 Text("Enable customization").font(.system(size: 16, weight: .medium)).foregroundColor(.white)
                                 Spacer()
                                 Toggle("", isOn: $appState.personalizationEnabled).labelsHidden()
@@ -47,9 +56,14 @@ struct PersonalizationView: View {
                             .padding(.horizontal, 16).padding(.vertical, 14)
                             .glassEffect(.regular.interactive())
                             
-                            // Custom instructions
+                            // Custom instructions with SF Symbol header
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Custom Instructions").font(.system(size: 13, weight: .medium)).foregroundColor(.white.opacity(0.4)).padding(.leading, 4)
+                                HStack(spacing: 6) {
+                                    Image(systemName: "text.quote")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white.opacity(0.4))
+                                    Text("Custom Instructions").font(.system(size: 13, weight: .medium)).foregroundColor(.white.opacity(0.4))
+                                }.padding(.leading, 4)
                                 
                                 ZStack(alignment: .bottomTrailing) {
                                     TextEditor(text: $instructions).foregroundColor(.white).font(.system(size: 15)).scrollContentBackground(.hidden).background(Color.clear).frame(minHeight: 160)
@@ -60,9 +74,12 @@ struct PersonalizationView: View {
                                 .glassEffect(.regular)
                             }
                             
-                            // Temperature
+                            // Temperature with SF Symbol
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
+                                    Image(systemName: "thermometer.medium")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(.white.opacity(0.6))
                                     Text("Temperature").font(.system(size: 16, weight: .semibold)).foregroundColor(.white)
                                     Spacer()
                                     Menu {
