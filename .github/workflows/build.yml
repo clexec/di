@@ -76,22 +76,21 @@ jobs:
           SIM_INFO=$(xcrun simctl list devices available | grep "iPhone" | head -1)
           echo "Found simulator: $SIM_INFO"
           
+          # Extract name: everything before the first (UUID)
           SIM_NAME=$(echo "$SIM_INFO" | sed 's/(.*//' | xargs)
           SIM_UUID=$(echo "$SIM_INFO" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
-          SIM_OS=$(echo "$SIM_INFO" | grep -oE '\([0-9]+\.[0-9]+\)' | tr -d '()')
           
           echo "SIM_NAME=$SIM_NAME" >> $GITHUB_ENV
           echo "SIM_UUID=$SIM_UUID" >> $GITHUB_ENV
-          echo "SIM_OS=$SIM_OS" >> $GITHUB_ENV
-          echo "Using: $SIM_NAME (iOS $SIM_OS) UUID=$SIM_UUID"
+          echo "Using: $SIM_NAME UUID=$SIM_UUID"
           
-          # Build for simulator using the found OS version
+          # Build for simulator - use name only (auto-detects OS)
           xcodebuild build \
             -project DeAI.xcodeproj \
             -scheme DeAI \
             -sdk iphonesimulator \
             -configuration Debug \
-            -destination "platform=iOS Simulator,name=$SIM_NAME,OS=$SIM_OS" \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
             -derivedDataPath build/DerivedData \
             COMPILER_INDEX_STORE_ENABLE=NO \
             CODE_SIGN_IDENTITY="" \
@@ -104,7 +103,7 @@ jobs:
           
           APP_PATH=$(find build/DerivedData -name "DeAI.app" -type d | head -1)
           echo "App path: $APP_PATH"
-          echo "Using simulator: $SIM_NAME ($SIM_UUID) iOS $SIM_OS"
+          echo "Using simulator: $SIM_NAME ($SIM_UUID)"
           
           # Erase and boot
           xcrun simctl shutdown "$SIM_UUID" 2>/dev/null || true
