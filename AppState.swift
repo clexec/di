@@ -17,7 +17,7 @@ enum AIProvider: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var icon: String {
         switch self {
-        case .openai: "brain"
+        case .openai: "brain.head.profile"
         case .deepseek: "waveform.path.ecg"
         case .gemini: "sparkles"
         case .openrouter: "arrow.triangle.branch"

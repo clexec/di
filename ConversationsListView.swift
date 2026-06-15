@@ -23,8 +23,7 @@ struct ConversationsListView: View {
                             .foregroundColor(.white.opacity(0.6))
                             .frame(width: 44, height: 44)
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .glassEffect(.regular.interactive())
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 18)

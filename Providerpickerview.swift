@@ -23,8 +23,7 @@ struct ProviderPickerView: View {
                             .foregroundColor(.white.opacity(0.6))
                             .frame(width: 44, height: 44)
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .glassEffect(.regular.interactive())
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 18)
@@ -78,7 +77,6 @@ struct ProviderRow: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .glassEffect(isSelected ? .regular.interactive() : .clear.interactive())
+        .glassEffect(isSelected ? .regular.interactive() : .clear.interactive(), in: .rect(cornerRadius: 14))
     }
 }

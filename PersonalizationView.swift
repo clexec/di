@@ -27,8 +27,7 @@ struct PersonalizationView: View {
                             .foregroundColor(.white.opacity(0.7))
                             .frame(width: 44, height: 44)
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .glassEffect(.regular.interactive())
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
                     
                     Button(action: { withAnimation { dismiss() } }) {
                         Image(systemName: "xmark.circle.fill")
@@ -36,8 +35,7 @@ struct PersonalizationView: View {
                             .foregroundColor(.white.opacity(0.6))
                             .frame(width: 44, height: 44)
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .glassEffect(.regular.interactive())
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 18)
@@ -60,8 +58,7 @@ struct PersonalizationView: View {
                         }
                         .padding(.horizontal, 18)
                         .padding(.vertical, 16)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .glassEffect(.regular.interactive())
+                        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 14))
                         
                         // Custom instructions
                         VStack(alignment: .leading, spacing: 8) {
@@ -101,8 +98,7 @@ struct PersonalizationView: View {
                                     .padding(8)
                             }
                             .padding(14)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                            .glassEffect(.regular)
+                            .glassEffect(.regular, in: .rect(cornerRadius: 14))
                         }
                         
                         // Temperature — NO oval
@@ -131,13 +127,11 @@ struct PersonalizationView: View {
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
                                 }
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                .glassEffect(.clear.interactive())
+                                .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 8))
                             }
                             .padding(.horizontal, 18)
                             .padding(.vertical, 16)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                            .glassEffect(.regular.interactive())
+                            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 14))
                             
                             Text("Controls randomness in responses. Lower values make the AI more focused and deterministic, while higher values make it more creative and unpredictable.")
                                 .font(.system(size: 14, weight: .medium))

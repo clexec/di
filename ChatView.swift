@@ -13,14 +13,13 @@ struct ChatView: View {
     
     var body: some View {
         ZStack {
-            // Video background — BRIGHT, high opacity
+            // Video background — standard brightness
             VideoBackgroundView(videoName: "bg_video")
                 .ignoresSafeArea()
-                .opacity(0.85)
-                .brightness(0.6)
+                .opacity(0.5)
             
-            // Very light overlay so content is readable
-            Color.black.opacity(0.15).ignoresSafeArea()
+            // Light overlay so content is readable
+            Color.black.opacity(0.2).ignoresSafeArea()
             
             VStack(spacing: 0) {
                 topNavBar
@@ -59,8 +58,7 @@ struct ChatView: View {
             }
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .glassEffect(.regular.interactive())
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
             
             // Model selector — tap to open popup
             Button(action: { withAnimation(.spring(response: 0.3)) { showModelPicker.toggle() } }) {
@@ -85,22 +83,21 @@ struct ChatView: View {
                     .foregroundColor(.white)
                     .frame(width: 38, height: 38)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .glassEffect(.regular.interactive())
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 10))
         }
         .padding(.horizontal, 16)
         .padding(.top, 8)
         .padding(.bottom, 12)
     }
     
-    // MARK: - Model Picker Popup — compact, bounded, NO oval
+    // MARK: - Model Picker Popup — compact, bounded, NO oval, WITH liquid glass
     private var modelPickerOverlay: some View {
         ZStack {
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
                 .onTapGesture { withAnimation(.spring(response: 0.3)) { showModelPicker = false } }
             
-            // Compact popup — clipped BEFORE glassEffect to avoid oval
+            // Compact popup with liquid glass in RoundedRectangle shape
             VStack(spacing: 0) {
                 Text("Select model")
                     .font(.system(size: 13, weight: .semibold))
@@ -181,8 +178,7 @@ struct ChatView: View {
                 .padding(.bottom, 10)
             }
             .frame(width: 240)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .glassEffect(.regular)
+            .glassEffect(.regular, in: .rect(cornerRadius: 14))
             .transition(.opacity.combined(with: .scale(scale: 0.95)))
         }
     }
@@ -219,8 +215,7 @@ struct ChatView: View {
                     .padding(.horizontal, 44)
                     .padding(.vertical, 12)
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .glassEffect(.regular.interactive())
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
                 .padding(.top, 4)
             }
             .padding(.horizontal, 20)
@@ -260,24 +255,22 @@ struct ChatView: View {
     // MARK: - Bottom Input
     private var bottomInputArea: some View {
         HStack(spacing: 10) {
-            // Plus button — clipped before glassEffect to avoid oval
+            // Plus button with liquid glass in rounded rectangle
             Button(action: { withAnimation(.spring()) { showAttachMenu.toggle() } }) {
                 Image(systemName: "plus")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(width: 42, height: 42)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .glassEffect(.regular.interactive())
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
             
-            // Text field
+            // Text field with liquid glass
             TextField("Ask anything", text: $messageText)
                 .foregroundColor(.white)
                 .font(.system(size: 17, weight: .medium))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .glassEffect(.regular)
+                .glassEffect(.regular, in: .rect(cornerRadius: 16))
             
             // Send button
             Button(action: sendMessage) {
@@ -291,7 +284,7 @@ struct ChatView: View {
         .padding(.bottom, 8)
     }
     
-    // MARK: - Attach Menu — clipped BEFORE glassEffect, tight bounds, NO oval
+    // MARK: - Attach Menu — WITH liquid glass, NO oval, rounded rectangle
     private var attachMenuOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear.contentShape(Rectangle())
@@ -304,8 +297,7 @@ struct ChatView: View {
                 Divider().background(Color.white.opacity(0.06))
                 AttachMenuItem(icon: "photo.fill", title: "Attach photo", subtitle: "Vision support required") { withAnimation { showAttachMenu = false } }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .glassEffect(.regular)
+            .glassEffect(.regular, in: .rect(cornerRadius: 14))
             .padding(.leading, 14)
             .padding(.bottom, 80)
         }
@@ -322,7 +314,6 @@ struct ChatView: View {
         
         Task {
             do {
-                // Use the MODEL's provider, not the global selected provider
                 let modelProvider = appState.selectedAIModel.provider
                 let response = try await AIService.shared.sendMessage(
                     provider: modelProvider, message: prompt,
@@ -365,8 +356,7 @@ struct QuickPromptChip: View {
             }
             .padding(.horizontal, 16).padding(.vertical, 14)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .glassEffect(.regular.interactive())
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
     }
 }
 
@@ -388,8 +378,7 @@ struct ChatBubble: View {
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 14).padding(.vertical, 10)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .glassEffect(message.isUser ? .regular.interactive() : .clear.interactive())
+            .glassEffect(message.isUser ? .regular.interactive() : .clear.interactive(), in: .rect(cornerRadius: 14))
             .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
             .contextMenu {
                 Button(action: { UIPasteboard.general.string = message.content }) {
@@ -442,8 +431,7 @@ struct TypingIndicator: View {
                 .foregroundColor(.white.opacity(0.5))
         }
         .padding(.horizontal, 16).padding(.vertical, 12)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .glassEffect(.clear)
+        .glassEffect(.clear, in: .rect(cornerRadius: 12))
         .onAppear { animating = true }
     }
 }

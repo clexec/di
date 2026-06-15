@@ -24,13 +24,26 @@ final class AIService {
         switch provider {
         case .ollama:
             return try await sendOllamaRequest(message: message, model: model ?? provider.defaultModel, systemPrompt: systemPrompt, baseURL: ollamaURL)
-        case .openai, .deepseek, .openrouter:
+        case .openai, .deepseek:
             return try await sendOpenAICompatibleRequest(
                 baseURL: provider.baseURL,
                 apiKey: apiKey ?? "",
                 message: message,
                 model: model ?? provider.defaultModel,
-                systemPrompt: systemPrompt
+                systemPrompt: systemPrompt,
+                extraHeaders: [:]
+            )
+        case .openrouter:
+            return try await sendOpenAICompatibleRequest(
+                baseURL: provider.baseURL,
+                apiKey: apiKey ?? "",
+                message: message,
+                model: model ?? provider.defaultModel,
+                systemPrompt: systemPrompt,
+                extraHeaders: [
+                    "HTTP-Referer": "https://deai.app",
+                    "X-Title": "DeAI"
+                ]
             )
         case .gemini:
             return try await sendGeminiRequest(apiKey: apiKey ?? "", message: message, model: model ?? provider.defaultModel, systemPrompt: systemPrompt)
@@ -50,13 +63,14 @@ final class AIService {
         return response.message.content
     }
     
-    private func sendOpenAICompatibleRequest(baseURL: String, apiKey: String, message: String, model: String, systemPrompt: String?) async throws -> String {
+    private func sendOpenAICompatibleRequest(baseURL: String, apiKey: String, message: String, model: String, systemPrompt: String?, extraHeaders: [String: String]) async throws -> String {
         guard let url = URL(string: "\(baseURL)/chat/completions") else { throw AIError.invalidURL }
         var messages: [[String: String]] = []
         if let sp = systemPrompt, !sp.isEmpty { messages.append(["role": "system", "content": sp]) }
         messages.append(["role": "user", "content": message])
         let body: [String: Any] = ["model": model, "messages": messages, "max_tokens": 2048]
-        let headers = ["Authorization": "Bearer \(apiKey)", "Content-Type": "application/json"]
+        var headers: [String: String] = ["Authorization": "Bearer \(apiKey)", "Content-Type": "application/json"]
+        for (key, value) in extraHeaders { headers[key] = value }
         let data = try await performRequest(url: url, body: body, headers: headers)
         let response = try JSONDecoder().decode(OpenAIResponse.self, from: data)
         guard let content = response.choices.first?.message.content else { throw AIError.emptyResponse }
@@ -96,7 +110,11 @@ final class AIService {
     }
 }
 
-struct OpenAIResponse: Decodable { let choices: [Choice]; struct Choice: Decodable { let message: Message }; struct Message: Decodable { let content: String } }
+struct OpenAIResponse: Decodable {
+    let choices: [Choice]
+    struct Choice: Decodable { let message: Message }
+    struct Message: Decodable { let content: String? }
+}
 struct OllamaResponse: Decodable { let message: OllamaMessage }; struct OllamaMessage: Decodable { let content: String }
 
 enum AIError: LocalizedError {
