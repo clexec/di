@@ -1,0 +1,98 @@
+import SwiftUI
+import Combine
+
+enum AIProvider: String, CaseIterable, Identifiable {
+    case openai = "OpenAI"
+    case deepseek = "DeepSeek"
+    case gemini = "Gemini"
+    case openrouter = "OpenRouter"
+    case custom = "Custom API"
+    
+    var id: String { rawValue }
+    
+    var icon: String {
+        switch self {
+        case .openai: return "sparkles"
+        case .deepseek: return "waveform"
+        case .gemini: return "star.circle"
+        case .openrouter: return "arrow.triangle.branch"
+        case .custom: return "terminal"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .openai: return Color(hex: "#10A37F")
+        case .deepseek: return Color(hex: "#4C6EF5")
+        case .gemini: return Color(hex: "#4285F4")
+        case .openrouter: return Color(hex: "#FF6B35")
+        case .custom: return Color(hex: "#8B5CF6")
+        }
+    }
+}
+
+struct ChatMessage: Identifiable {
+    let id = UUID()
+    let content: String
+    let isUser: Bool
+    let timestamp: Date
+}
+
+struct Conversation: Identifiable {
+    let id = UUID()
+    var title: String
+    var messages: [ChatMessage]
+    var provider: AIProvider
+    var createdAt: Date
+}
+
+class AppState: ObservableObject {
+    @Published var selectedTab: Int = 0
+    @Published var selectedProvider: AIProvider = .openai
+    @Published var conversations: [Conversation] = []
+    @Published var currentConversation: Conversation?
+    @Published var apiKeys: [AIProvider: String] = [:]
+    @Published var customAPIURL: String = ""
+    @Published var showKeyboardOnLaunch: Bool = true
+    @Published var customInstructions: String = ""
+    @Published var personalizationEnabled: Bool = true
+    @Published var browserURL: String = "https://www.google.com"
+    
+    init() {
+        conversations = [
+            Conversation(title: "Swift UI help", messages: [
+                ChatMessage(content: "Can you help me with SwiftUI animations?", isUser: true, timestamp: Date()),
+                ChatMessage(content: "Sure! SwiftUI has great built-in animation support.", isUser: false, timestamp: Date())
+            ], provider: .openai, createdAt: Date()),
+            Conversation(title: "Recipe ideas", messages: [
+                ChatMessage(content: "Give me pasta recipe ideas", isUser: true, timestamp: Date())
+            ], provider: .gemini, createdAt: Date().addingTimeInterval(-3600))
+        ]
+    }
+}
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3:
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6:
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8:
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue:  Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+}
