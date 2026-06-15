@@ -13,8 +13,17 @@ struct PersonalizationView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — bigger close with glass
+                // Header with back and close buttons
                 HStack {
+                    // Back button with glassEffect
+                    Button(action: { withAnimation { dismiss() } }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                    }
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
+                    
                     Text("Personalization")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
@@ -22,18 +31,11 @@ struct PersonalizationView: View {
                     Spacer()
                     
                     Button(action: { withAnimation { appState.customInstructions = instructions; dismiss() } }) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 28, weight: .medium))
-                            .foregroundColor(.white.opacity(0.7))
-                            .frame(width: 44, height: 44)
-                    }
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
-                    
-                    Button(action: { withAnimation { dismiss() } }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 28, weight: .medium))
-                            .foregroundColor(.white.opacity(0.6))
-                            .frame(width: 44, height: 44)
+                        Text("Save")
+                            .font(.system(size: 17, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
                     }
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
                 }
@@ -43,7 +45,7 @@ struct PersonalizationView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Toggle — green, NO oval
+                        // Toggle with glassEffect
                         HStack {
                             Image(systemName: "slider.horizontal.3")
                                 .font(.system(size: 17, weight: .semibold))
@@ -101,7 +103,7 @@ struct PersonalizationView: View {
                             .glassEffect(.regular, in: .rect(cornerRadius: 14))
                         }
                         
-                        // Temperature — NO oval
+                        // Temperature with glassEffect
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Image(systemName: "thermometer.medium")
@@ -127,7 +129,7 @@ struct PersonalizationView: View {
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
                                 }
-                                .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 8))
+                                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 8))
                             }
                             .padding(.horizontal, 18)
                             .padding(.vertical, 16)

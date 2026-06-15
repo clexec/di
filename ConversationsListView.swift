@@ -9,7 +9,7 @@ struct ConversationsListView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — bigger close with glass
+                // Header with glassEffect
                 HStack {
                     Text("Chats")
                         .font(.system(size: 24, weight: .bold))
@@ -40,43 +40,59 @@ struct ConversationsListView: View {
                             .foregroundColor(.white.opacity(0.25))
                     }
                     .padding(32)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 20))
                     Spacer()
                 } else {
-                    List {
-                        ForEach(appState.conversations) { conversation in
-                            Button(action: { withAnimation { appState.currentConversation = conversation; dismiss() } }) {
-                                HStack(spacing: 12) {
-                                    ProviderIconView(provider: conversation.provider, size: 22)
-                                        .frame(width: 36, height: 36)
-                                    
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        Text(conversation.title)
-                                            .font(.system(size: 17, weight: .semibold))
-                                            .foregroundColor(.white)
-                                        HStack(spacing: 4) {
-                                            Image(systemName: "message.fill")
-                                                .font(.system(size: 11, weight: .medium))
-                                                .foregroundColor(.white.opacity(0.2))
-                                            Text("\(conversation.messages.count) messages")
-                                                .font(.system(size: 14, weight: .medium))
-                                                .foregroundColor(.white.opacity(0.3))
-                                        }
-                                    }
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .font(.system(size: 13, weight: .bold))
-                                        .foregroundColor(.white.opacity(0.15))
+                    ScrollView {
+                        VStack(spacing: 8) {
+                            ForEach(appState.conversations) { conversation in
+                                ConversationRow(conversation: conversation) {
+                                    withAnimation { appState.currentConversation = conversation; dismiss() }
                                 }
-                                .padding(.vertical, 4)
                             }
-                            .listRowBackground(Color.clear)
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 40)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                 }
             }
         }
         .preferredColorScheme(.dark)
+    }
+}
+
+// MARK: - Conversation Row with glassEffect
+struct ConversationRow: View {
+    let conversation: Conversation
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                ProviderIconView(provider: conversation.provider, size: 22)
+                    .frame(width: 36, height: 36)
+                
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(conversation.title)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.white)
+                    HStack(spacing: 4) {
+                        Image(systemName: "message.fill")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.white.opacity(0.2))
+                        Text("\(conversation.messages.count) messages")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.3))
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(.white.opacity(0.15))
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
+        }
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 14))
     }
 }

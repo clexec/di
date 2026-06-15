@@ -1,6 +1,26 @@
 import SwiftUI
 import AVFoundation
 
+// MARK: - Gradient Background (matching reference design)
+struct GradientBackgroundView: View {
+    var body: some View {
+        ZStack {
+            // Deep purple/violet at top transitioning to dark navy/black
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.35, green: 0.15, blue: 0.65),  // Vibrant purple
+                    Color(red: 0.15, green: 0.1, blue: 0.35),   // Deep violet
+                    Color(red: 0.05, green: 0.05, blue: 0.15),  // Dark navy
+                    Color(red: 0.02, green: 0.02, blue: 0.05)   // Near black
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        }
+    }
+}
+
 // MARK: - Looping Video Background
 // Plays video in loop, slowed down, with 2-second gap between loops
 struct VideoBackgroundView: UIViewRepresentable {

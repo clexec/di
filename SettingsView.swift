@@ -52,8 +52,7 @@ struct SettingsView: View {
                                 Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
                                 SettingsRow(icon: "trash.fill", title: "Delete conversation history", isDestructive: true) {}
                             }
-                            .background(Color.white.opacity(0.06))
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .glassEffect(.regular, in: .rect(cornerRadius: 16))
                         }
                         
                         // ABOUT section
@@ -72,8 +71,7 @@ struct SettingsView: View {
                                 Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
                                 SettingsRow(icon: "info.circle.fill", title: "Version 1.57.0") {}
                             }
-                            .background(Color.white.opacity(0.06))
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .glassEffect(.regular, in: .rect(cornerRadius: 16))
                         }
                         
                         // MORE section
@@ -85,10 +83,17 @@ struct SettingsView: View {
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "square.and.arrow.up.fill", title: "Share the app") {}
+                                Divider().background(Color.white.opacity(0.05)).padding(.leading, 60)
+                                SettingsRow(icon: "chevron.left.forwardslash.chevron.right", title: "Follow us on X") {}
                             }
-                            .background(Color.white.opacity(0.06))
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .glassEffect(.regular, in: .rect(cornerRadius: 16))
                         }
+                        
+                        // Footer
+                        Text("Made with ❤️ in 🇫🇷")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.3))
+                            .padding(.top, 20)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 12)
@@ -101,7 +106,7 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Settings Row — bigger, more spacing, icon with border
+// MARK: - Settings Row with glassEffect
 struct SettingsRow: View {
     let icon: String
     let title: String
@@ -147,10 +152,11 @@ struct SettingsRow: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 16)
         }
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
     }
 }
 
-// MARK: - Settings Toggle Row — green tint
+// MARK: - Settings Toggle Row with glassEffect
 struct SettingsToggleRow: View {
     let icon: String
     let title: String
@@ -180,5 +186,6 @@ struct SettingsToggleRow: View {
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 16)
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
     }
 }

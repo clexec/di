@@ -13,13 +13,16 @@ struct ChatView: View {
     
     var body: some View {
         ZStack {
-            // Video background — standard brightness
+            // Gradient background matching reference design
+            GradientBackgroundView()
+            
+            // Subtle video overlay (optional, can be disabled)
             VideoBackgroundView(videoName: "bg_video")
                 .ignoresSafeArea()
-                .opacity(0.5)
+                .opacity(0.3)
             
             // Light overlay so content is readable
-            Color.black.opacity(0.2).ignoresSafeArea()
+            Color.black.opacity(0.15).ignoresSafeArea()
             
             VStack(spacing: 0) {
                 topNavBar
@@ -40,7 +43,7 @@ struct ChatView: View {
     // MARK: - Top Nav Bar
     private var topNavBar: some View {
         HStack(spacing: 8) {
-            // Settings + Chats — side by side, compact
+            // Settings + Chats — side by side, compact with glassEffect
             HStack(spacing: 4) {
                 Button(action: { showSettings = true }) {
                     Image(systemName: "gearshape.fill")
@@ -48,6 +51,7 @@ struct ChatView: View {
                         .foregroundColor(.white)
                         .frame(width: 38, height: 38)
                 }
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 10))
                 
                 Button(action: { showConversations = true }) {
                     Image(systemName: "bubble.left.fill")
@@ -55,12 +59,13 @@ struct ChatView: View {
                         .foregroundColor(.white)
                         .frame(width: 38, height: 38)
                 }
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 10))
             }
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
             .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
             
-            // Model selector — tap to open popup
+            // Model selector — tap to open popup with glassEffect
             Button(action: { withAnimation(.spring(response: 0.3)) { showModelPicker.toggle() } }) {
                 HStack(spacing: 4) {
                     Text(appState.selectedAIModel.displayName)
@@ -73,10 +78,11 @@ struct ChatView: View {
                         .rotationEffect(.degrees(showModelPicker ? 180 : 0))
                 }
             }
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
             
             Spacer()
             
-            // New chat button
+            // New chat button with glassEffect
             Button(action: { withAnimation { messages = [] } }) {
                 Image(systemName: "square.and.pencil")
                     .font(.system(size: 20, weight: .semibold))
@@ -219,10 +225,14 @@ struct ChatView: View {
                 .padding(.top, 4)
             }
             .padding(.horizontal, 20)
+            .padding(.vertical, 30)
+            .glassEffect(.regular, in: .rect(cornerRadius: 20))
+            .padding(.horizontal, 16)
+            .padding(.horizontal, 20)
             
             Spacer()
             
-            // Quick prompts
+            // Quick prompts with glassEffect container
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     QuickPromptChip(icon: "book.fill", title: "Discover", subtitle: "my next book") { messageText = "Discover my next book" }
@@ -232,6 +242,7 @@ struct ChatView: View {
                 .padding(.horizontal, 16)
             }
             .padding(.bottom, 12)
+            .padding(.horizontal, 8)
         }
     }
     
@@ -245,6 +256,8 @@ struct ChatView: View {
                 if isLoading {
                     HStack { TypingIndicator(); Spacer() }
                         .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .glassEffect(.regular, in: .rect(cornerRadius: 12))
                 }
             }
             .padding(.horizontal, 16)
@@ -272,12 +285,14 @@ struct ChatView: View {
                 .padding(.vertical, 12)
                 .glassEffect(.regular, in: .rect(cornerRadius: 16))
             
-            // Send button
+            // Send button with liquid glass
             Button(action: sendMessage) {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(messageText.isEmpty ? .white.opacity(0.25) : .white.opacity(0.9))
+                    .frame(width: 42, height: 42)
             }
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
@@ -336,7 +351,7 @@ struct ChatView: View {
     }
 }
 
-// MARK: - Quick Prompt Chip
+// MARK: - Quick Prompt Chip with glassEffect
 struct QuickPromptChip: View {
     let icon: String
     let title: String
@@ -395,7 +410,7 @@ struct ChatBubble: View {
     }
 }
 
-// MARK: - Attach Menu Item
+// MARK: - Attach Menu Item with glassEffect
 struct AttachMenuItem: View {
     let icon: String
     let title: String
@@ -417,6 +432,7 @@ struct AttachMenuItem: View {
             }
             .padding(.horizontal, 16).padding(.vertical, 14)
         }
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
     }
 }
 

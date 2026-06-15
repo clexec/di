@@ -9,7 +9,7 @@ struct ProviderPickerView: View {
             Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header — bigger close with glass
+                // Header with glassEffect
                 HStack {
                     Text("Select Provider")
                         .font(.system(size: 24, weight: .bold))
@@ -29,7 +29,7 @@ struct ProviderPickerView: View {
                 .padding(.top, 18)
                 .padding(.bottom, 16)
                 
-                // Provider list — glassEffect rows, NO ovals
+                // Provider list with glassEffect
                 ScrollView {
                     VStack(spacing: 8) {
                         ForEach(AIProvider.allCases) { provider in
@@ -77,6 +77,6 @@ struct ProviderRow: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
         }
-        .glassEffect(isSelected ? .regular.interactive() : .clear.interactive(), in: .rect(cornerRadius: 14))
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 14))
     }
 }
