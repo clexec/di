@@ -49,7 +49,7 @@ struct SettingsView: View {
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "cube.fill", iconColor: Color(hex: "#8B5CF6"), title: "Manage models", subtitle: nil) {}
                                 Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
-                                SettingsRow(icon: "link", iconColor: Color(hex: "#10B981"), title: "LM Link", badge: "New") {}
+                                SettingsRow(icon: "link", iconColor: Color(hex: "#10B981"), title: "LM Link", subtitle: nil, badge: "New") {}
                                 Divider().background(Color.white.opacity(0.04)).padding(.leading, 54)
                                 SettingsRow(icon: "person.fill", iconColor: Color(hex: "#8B5CF6"), title: "Personalization", subtitle: nil) {
                                     showPersonalization = true
