@@ -19,9 +19,9 @@ enum AIProvider: String, CaseIterable, Identifiable {
         switch self {
         case .openai: "brain"
         case .deepseek: "waveform.path.ecg"
-        case .gemini: "star.circle"
-        case .openrouter: "network"
-        case .ollama: "server.rack"
+        case .gemini: "sparkles"
+        case .openrouter: "arrow.triangle.branch"
+        case .ollama: "desktopcomputer"
         case .custom: "terminal"
         }
     }
@@ -33,7 +33,7 @@ enum AIProvider: String, CaseIterable, Identifiable {
     }
 }
 
-// MARK: - Available Models
+// MARK: - Available Models — includes OpenRouter models that actually work
 struct AIModel: Identifiable, Equatable {
     let id = UUID()
     let name: String
@@ -42,6 +42,12 @@ struct AIModel: Identifiable, Equatable {
     let modelId: String
     
     static let availableModels: [AIModel] = [
+        // OpenRouter models — work with API key
+        AIModel(name: "GPT-4o Mini", subtitle: "Cloud", provider: .openrouter, modelId: "openai/gpt-4o-mini"),
+        AIModel(name: "DeepSeek V3", subtitle: "Cloud", provider: .openrouter, modelId: "deepseek/deepseek-chat"),
+        AIModel(name: "Llama 3.3", subtitle: "70B", provider: .openrouter, modelId: "meta-llama/llama-3.3-70b-instruct"),
+        AIModel(name: "Gemma 3", subtitle: "27B", provider: .openrouter, modelId: "google/gemma-3-27b-it"),
+        // Local Ollama models
         AIModel(name: "Bonsai", subtitle: "8B", provider: .ollama, modelId: "bonsai-8b"),
         AIModel(name: "Qwen 3.5", subtitle: "2B", provider: .ollama, modelId: "qwen3.5-2b"),
         AIModel(name: "SmolLM 3", subtitle: "3B", provider: .ollama, modelId: "smollm3-3b"),
@@ -57,15 +63,15 @@ struct ChatMessage: Identifiable { let id = UUID(); let content: String; let isU
 struct Conversation: Identifiable { let id = UUID(); var title: String; var messages: [ChatMessage]; var provider: AIProvider; var createdAt: Date }
 
 class AppState: ObservableObject {
-    @Published var selectedProvider: AIProvider = .ollama
+    @Published var selectedProvider: AIProvider = .openrouter
     @Published var conversations: [Conversation] = []
     @Published var currentConversation: Conversation?
     @Published var apiKeys: [AIProvider: String] = [:]
     @Published var ollamaURL: String = "http://localhost:11434"
     @Published var customInstructions: String = ""
     @Published var personalizationEnabled: Bool = true
-    @Published var selectedModel: String = "Gemma 3 QAT 1B"
-    @Published var selectedAIModel: AIModel = AIModel.availableModels[3]
+    @Published var selectedModel: String = "GPT-4o Mini"
+    @Published var selectedAIModel: AIModel = AIModel.availableModels[0]
     @Published var showKeyboardOnLaunch: Bool = true
     
     init() { apiKeys[.openrouter] = "76f439c65f4941278295e5552e463d11.BmVE0opP9oCNGcLfyTWbOGE-" }

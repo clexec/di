@@ -116,6 +116,7 @@ struct ChatView: View {
                             withAnimation(.spring(response: 0.3)) {
                                 appState.selectedAIModel = model
                                 appState.selectedModel = model.displayName
+                                appState.selectedProvider = model.provider
                                 showModelPicker = false
                             }
                         }) {
@@ -321,9 +322,11 @@ struct ChatView: View {
         
         Task {
             do {
+                // Use the MODEL's provider, not the global selected provider
+                let modelProvider = appState.selectedAIModel.provider
                 let response = try await AIService.shared.sendMessage(
-                    provider: appState.selectedProvider, message: prompt,
-                    apiKey: appState.apiKeys[appState.selectedProvider],
+                    provider: modelProvider, message: prompt,
+                    apiKey: appState.apiKeys[modelProvider],
                     model: appState.selectedAIModel.modelId,
                     systemPrompt: appState.personalizationEnabled ? appState.customInstructions : nil,
                     ollamaURL: appState.ollamaURL
